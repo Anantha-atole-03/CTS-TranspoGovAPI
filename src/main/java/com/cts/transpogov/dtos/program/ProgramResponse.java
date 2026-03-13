@@ -4,9 +4,11 @@ import java.time.LocalDate;
 
 import com.cts.transpogov.enums.ProgramStatus;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class ProgramResponse {
   private Long programId;
   private String title;
