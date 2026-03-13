@@ -35,6 +35,7 @@ public class Citizen {
   private String address;
   @Column(name = "contact_info", columnDefinition = "text")
   private String contactInfo;
+  private String password;
 
   @Enumerated(EnumType.STRING)
   private CitizenStatus status;
