@@ -2,69 +2,115 @@ package com.cts.transpogov.controllers;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import com.cts.transpogov.dtos.ApiResponse;
 import com.cts.transpogov.dtos.compliance.ComplianceCreateRequest;
 import com.cts.transpogov.dtos.compliance.ComplianceResponse;
-import com.cts.transpogov.models.ComplianceRecord;
+import com.cts.transpogov.exceptions.ComplianceNotFoundException;
 import com.cts.transpogov.service.ComplianceRecordService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/compliances")
+@RequiredArgsConstructor
 public class ComplianceRecordController {
 
-	private final ComplianceRecordService service;
+    private final ComplianceRecordService service;
 
-	public ComplianceRecordController(ComplianceRecordService service) {
-		this.service = service;
-	}
+    @GetMapping("/")
+    public ResponseEntity<?> getAll() {
+        List<ComplianceResponse> data = service.findAll();
+        return ResponseEntity.ok(
+                new ApiResponse<List<ComplianceResponse>>(
+                        "Records fetched!",
+                        HttpStatus.OK.value(),
+                        data
+                )
+        );
+    }
 
-	@GetMapping("/")
-	public List<ComplianceResponse> getAll() {
-		return service.findAll();
-	}
 
-	@GetMapping("/get/{id}")
-	public ComplianceResponse getById(@PathVariable Long id) {
-		return  null;
-	}
-	
-	
-	@PostMapping("/save")
-	public ResponseEntity<ComplianceResponse> create(@RequestBody ComplianceCreateRequest body) {
-//		ComplianceRecord created = service.create(body);
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<ComplianceResponse>> getById(@PathVariable Long id) {
+        ComplianceResponse data = service.findById(id);
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "Record fetched!",
+                        HttpStatus.OK.value(),
+                        data
+                )
+        );
+    }
 
-		return null;
-	}
 
-	@PutMapping("/update/{id}")
-	public ComplianceResponse update(@PathVariable Long id, @RequestBody ComplianceRecord body)
-			 {
-		return null;
-	}
+    @PostMapping("/save")
+    public ResponseEntity<ApiResponse<String>> create(@RequestBody ComplianceCreateRequest body) {
+        String message = service.create(body);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse<>(
+                        message,
+                        HttpStatus.CREATED.value(),
+                        null
+                ));
+    }
 
-	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<Void> delete(@PathVariable Long id) {
-		service.delete(id);
-		return ResponseEntity.noContent().build();
-	}
+  
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ApiResponse<ComplianceResponse>> update(@PathVariable Long id,
+                                                                  @RequestBody ComplianceCreateRequest body) {
+        ComplianceResponse updated = service.update(id, body);
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "Record updated successfully",
+                        HttpStatus.OK.value(),
+                        updated
+                )
+        );
+    }
 
-	@GetMapping("/summary")
-	public Long getCount() {
-		return service.getCount();
-	}
+    // DELETE /compliances/delete/{id}
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<String>> delete(@PathVariable Long id) {
+        String message = service.delete(id);
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        message,
+                        HttpStatus.OK.value(),
+                        null
+                )
+        );
+    }
 
-	@GetMapping("/getByEntity/{entityId}")
-	public List<ComplianceResponse> findByEntityId(@PathVariable("entityId") Long entityId)  {
-		return service.findByEntityId(entityId);
-	}
+    // GET /compliances/summary
+    @GetMapping("/summary")
+    public ResponseEntity<ApiResponse<Long>> getCount() {
+        Long count = service.getCount();
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "Count fetched!",
+                        HttpStatus.OK.value(),
+                        count
+                )
+        );
+    }
 
+    // GET /compliances/getByEntity/{entityId}
+    @GetMapping("/getByEntity/{entityId}")
+    public ResponseEntity<ApiResponse<List<ComplianceResponse>>> findByEntityId(@PathVariable("entityId") Long entityId) {
+        List<ComplianceResponse> list = service.findByEntityId(entityId);
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "Records fetched by entityId!",
+                        HttpStatus.OK.value(),
+                        list
+                )
+        );
+    }
+
+   
+   
 }

@@ -13,11 +13,11 @@ public interface IComplianceRecordService {
 
 	Long getCount();
 
-	ComplianceResponse create(ComplianceCreateRequest record);
+	String create(ComplianceCreateRequest record);
 
 	ComplianceResponse update(Long id, ComplianceCreateRequest record);
 
-	void delete(Long id);
+	String delete(Long id);
 
 	ComplianceResponse findById(Long id);
 
