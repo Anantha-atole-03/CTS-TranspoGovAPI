@@ -21,26 +21,40 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity @Table(name = "users")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@ToString
 public class User {
   @Id @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "user_id", updatable = false, nullable = false)
   private Long userId;
-
   private String name;
-
   @Enumerated(EnumType.STRING)
   private UserRole role;
-
   private String email;
   private String phone;
   private String password;
-
   @Enumerated(EnumType.STRING)
   private UserStatus status;
 
   @CreationTimestamp private LocalDateTime createdAt;
   @UpdateTimestamp private LocalDateTime updatedAt;
+  public User(String name, UserRole role, String email, String phone, String password, UserStatus status,
+		LocalDateTime createdAt, LocalDateTime updatedAt) {
+	super();
+	this.name = name;
+	this.role = role;
+	this.email = email;
+	this.phone = phone;
+	this.password = password;
+	this.status = status;
+	this.createdAt = createdAt;
+	this.updatedAt = updatedAt;
+  }
+  
+  
+  
+  
 }

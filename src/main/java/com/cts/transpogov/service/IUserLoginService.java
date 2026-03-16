@@ -9,9 +9,10 @@ import com.cts.transpogov.models.User;
 
 public interface IUserLoginService {
 	
-	UserResponse addUser(UserCreateRequest user);
+	User createUser(UserCreateRequest user);
 	List<User>getAllUser();
 	void UpdateUser(User user,Long userId);
 	void UpdateUserRoles(UserRole userRole, Long userId);
+	User findById(Long id);
 
 }
