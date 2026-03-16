@@ -11,16 +11,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 	
-//	
-//	@ExceptionHandler(MethodArgumentNotValidException.class)
-//	public ResponseEntity<?> handleInvalidInputException(MethodArgumentNotValidException e) {
-//	
-//		Map<String, String> errorMap = e.getFieldErrors().stream()
-//				.collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
-//		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//				.body(new ExceptionResponse(errorMap.get("name"),HttpStatus.NOT_FOUND.value()));
-//	}
-	
+
+	@ExceptionHandler(ProgramNotFoundException.class)
+	public ResponseEntity<ExceptionResponse> handleProgramNotFoundException(ProgramNotFoundException e){
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionResponse(e.getMessage(),HttpStatus.NOT_FOUND.value()));
+	}
+
+	@ExceptionHandler(IllegalStateException.class)
+	public ResponseEntity<ExceptionResponse> handleIllegalStateException(IllegalStateException e){
+		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ExceptionResponse(e.getMessage(),HttpStatus.NOT_ACCEPTABLE.value()));
+	}
+
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException ex) {
