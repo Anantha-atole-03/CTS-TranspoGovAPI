@@ -10,4 +10,5 @@ public class TranspoGovApplication {
 		SpringApplication.run(TranspoGovApplication.class, args);
 	}
 
+	
 }
