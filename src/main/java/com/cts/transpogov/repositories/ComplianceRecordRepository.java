@@ -5,8 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import com.cts.transpogov.models.ComplianceRecord;
 
-
 @Repository
 public interface ComplianceRecordRepository extends JpaRepository<ComplianceRecord, Long> {
-
+    // Basic CRUD is enough for now
 }

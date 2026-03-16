@@ -20,6 +20,11 @@ public class GlobalExceptionHandler {
 //		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 //				.body(new ExceptionResponse(errorMap.get("name"),HttpStatus.NOT_FOUND.value()));
 //	}
+
+	@ExceptionHandler(ComplianceNotFoundException.class)
+	public ResponseEntity<ExceptionResponse> handleException(ComplianceNotFoundException e){
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionResponse(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
+	}
 	
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
