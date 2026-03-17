@@ -15,6 +15,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,12 +31,17 @@ public class Resource {
   private Long resourceId;
 
   @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "program_id")
+  @NotNull(message = "Program details required")
   private TransportProgram program; 
 
+  @NotNull(message = "Resource type required")
   @Enumerated(EnumType.STRING)
   private ResourceType type; 
-  private Double quantity;
+  @Positive(message = "Resource quantity shold be positive")
+  @NotNull(message = "Resource type required")
+  private int quantity;
 
+  @NotNull(message = "Resource status required")
   @Enumerated(EnumType.STRING)
   private ResourceStatus status;
 }

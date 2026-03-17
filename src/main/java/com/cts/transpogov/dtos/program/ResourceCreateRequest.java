@@ -17,6 +17,6 @@ public class ResourceCreateRequest {
 	private ResourceType type;
 	@NotNull(message = "Quntity should be provided")
 	@Positive(message = "Quantity should be positive number")
-	private Double quantity;
+	private int quantity;
 	private ResourceStatus status;
 }

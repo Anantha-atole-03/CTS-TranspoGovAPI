@@ -11,6 +11,6 @@ public class ResourceResponse {
   private Long resourceId;
   private Long programId;
   private ResourceType type;
-  private Double quantity;
+  private int quantity;
   private ResourceStatus status;
 }
