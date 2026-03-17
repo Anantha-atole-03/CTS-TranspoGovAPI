@@ -8,9 +8,21 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 	
+	@ExceptionHandler(ResourceAllocationException.class)
+	public ResponseEntity<ExceptionResponse> handleResourceAllocationException(ResourceAllocationException e){
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionResponse(e.getMessage(),HttpStatus.NOT_FOUND.value()));
+	}
+
+	@ExceptionHandler(ResourceNotFoundException.class)
+	public ResponseEntity<ExceptionResponse> handleResourceNotFoundException(ResourceNotFoundException e){
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionResponse(e.getMessage(),HttpStatus.NOT_FOUND.value()));
+	}
 
 	@ExceptionHandler(ProgramNotFoundException.class)
 	public ResponseEntity<ExceptionResponse> handleProgramNotFoundException(ProgramNotFoundException e){

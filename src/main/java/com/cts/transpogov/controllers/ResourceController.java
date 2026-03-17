@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -21,12 +22,14 @@ import com.cts.transpogov.dtos.program.ResourceCreateRequest;
 import com.cts.transpogov.dtos.program.ResourceResponse;
 import com.cts.transpogov.enums.ResourceStatus;
 import com.cts.transpogov.service.IResourceService;
+
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/resources")
 @RequiredArgsConstructor
-//@Slf4j
+@Validated
 public class ResourceController {
 
 	private final IResourceService resourceService;
@@ -47,27 +50,27 @@ public class ResourceController {
 	}
 
 	@GetMapping("")
-	public ResponseEntity<ApiResponse<List<ResourceResponse>>> getAllResourcesByProgram(@RequestParam Long programId) {
+	public ResponseEntity<ApiResponse<List<ResourceResponse>>> getAllResourcesByProgram(@RequestParam @NotNull(message = "Program id is required") Long programId) {
 		return ResponseEntity.ok(new ApiResponse<>("Resource fetched successfully", HttpStatus.OK.value(),
 				resourceService.getAllResoucesByProgramId(programId)));
 	}
 
 	@PostMapping("/")
-	public ResponseEntity<ApiResponse<String>> addResource(@RequestBody ResourceCreateRequest createRequest) {
+	public ResponseEntity<ApiResponse<String>> addResource(@RequestBody @NotNull(message = "Resource data required") ResourceCreateRequest createRequest) {
 	
 		return ResponseEntity.status(HttpStatus.CREATED)
 				.body(new ApiResponse<>(resourceService.addResouce(createRequest), HttpStatus.CREATED.value(), null));
 	}
 
 	@PatchMapping("/{resourceId}")
-	public ResponseEntity<ApiResponse<String>> changeResourceStatus(@PathVariable Long resourceId,
-			@RequestParam ResourceStatus status) {
+	public ResponseEntity<ApiResponse<String>> changeResourceStatus(@PathVariable @NotNull(message = "Resource Id required") Long resourceId,
+			@NotNull(message = "Resource Status required") @RequestParam ResourceStatus status) {
 		return ResponseEntity.ok(new ApiResponse<>(resourceService.changeResourcStatus(resourceId, status),
 				HttpStatus.OK.value(), null));
 
 	}
 	@PatchMapping("/{resourceId}/allocate")
-	public ResponseEntity<ApiResponse<String>> allocateResource(@PathVariable Long resourceId) {
+	public ResponseEntity<ApiResponse<String>> allocateResource(@PathVariable @NotNull(message = "Resource Id required") Long resourceId) {
 		return ResponseEntity.ok(new ApiResponse<>(resourceService.allocateResouce(resourceId),
 				HttpStatus.OK.value(), null));
 
