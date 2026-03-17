@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/programs")
 @RequiredArgsConstructor
-@Validated
+	@Validated
 public class TransportProgramController {
 
 	private final ITransportProgramService programService;

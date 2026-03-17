@@ -2,6 +2,7 @@ package com.cts.transpogov.models;
 
 
 import com.cts.transpogov.enums.ResourceStatus;
+import com.cts.transpogov.enums.ResourceType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,7 +31,8 @@ public class Resource {
   @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "program_id")
   private TransportProgram program; 
 
-  private String type; 
+  @Enumerated(EnumType.STRING)
+  private ResourceType type; 
   private Double quantity;
 
   @Enumerated(EnumType.STRING)

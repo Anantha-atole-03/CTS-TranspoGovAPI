@@ -19,6 +19,7 @@ public class TranspoGovApplication {
 		mapper.getConfiguration()
 		.setMatchingStrategy(MatchingStrategies.STRICT)
 		.setPropertyCondition(Conditions.isNotNull());
+		
 		return mapper;
 	}
 

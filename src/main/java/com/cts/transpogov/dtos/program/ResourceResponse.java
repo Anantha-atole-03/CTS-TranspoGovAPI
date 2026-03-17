@@ -2,6 +2,7 @@ package com.cts.transpogov.dtos.program;
 
 
 import com.cts.transpogov.enums.ResourceStatus;
+import com.cts.transpogov.enums.ResourceType;
 
 import lombok.Data;
 
@@ -9,7 +10,7 @@ import lombok.Data;
 public class ResourceResponse {
   private Long resourceId;
   private Long programId;
-  private String type;
+  private ResourceType type;
   private Double quantity;
   private ResourceStatus status;
 }
