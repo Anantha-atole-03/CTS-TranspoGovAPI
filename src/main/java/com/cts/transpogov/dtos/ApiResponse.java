@@ -1,7 +1,14 @@
 package com.cts.transpogov.dtos;
 
+
+
 import java.time.LocalDateTime;
 
+/**
+ * ApiResponse<T>
+ * - Preserves your existing fields and constructors.
+ * - Adds static factory methods ok(...) and created(...) to match controller usage.
+ */
 public class ApiResponse<T> {
 
     private String message;
@@ -26,7 +33,43 @@ public class ApiResponse<T> {
         this.time = LocalDateTime.now();
     }
 
-    // Getters & Setters
+    /* ---------------------------------------------------------
+       Static factory helpers (added to support your controller)
+       --------------------------------------------------------- */
+
+    /** 200 OK with data */
+    public static <T> ApiResponse<T> ok(T data) {
+        ApiResponse<T> res = new ApiResponse<>("OK", 200, data);
+        return res;
+    }
+
+    /** 200 OK with custom message */
+    public static <T> ApiResponse<T> ok(String message, T data) {
+        ApiResponse<T> res = new ApiResponse<>(message, 200, data);
+        return res;
+    }
+
+    /** 201 Created with data */
+    public static <T> ApiResponse<T> created(T data) {
+        ApiResponse<T> res = new ApiResponse<>("CREATED", 201, data);
+        return res;
+    }
+
+    /** 201 Created with custom message */
+    public static <T> ApiResponse<T> created(String message, T data) {
+        ApiResponse<T> res = new ApiResponse<>(message, 201, data);
+        return res;
+    }
+
+    /** Generic error helper (not required by your controller, but handy) */
+    public static <T> ApiResponse<T> error(String message, int statusCode) {
+        ApiResponse<T> res = new ApiResponse<>(message, statusCode, null);
+        return res;
+    }
+
+    /* -------------------
+       Getters & Setters
+       ------------------- */
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
 

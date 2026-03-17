@@ -1,38 +1,61 @@
 package com.cts.transpogov.models;
 
-import java.time.LocalDate;
 
 import com.cts.transpogov.enums.AuditStatus;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Entity @Table(name = "audits")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter 	
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString(exclude = "findings")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Entity
+@Table(name = "audit")
 public class Audit {
-  @Id @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "audit_id", updatable = false, nullable = false)
-  private Long auditId;
 
-  private Long officerId; // reference to User, kept as Long
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Auditid")
+    @EqualsAndHashCode.Include
+    private Long id;
 
-  private String scope;     // e.g., "Program:P-045" or "Route:R-006"
-  @Column(columnDefinition = "text")
-  private String findings;  // JSON or text blob if not normalized
+    @Column(name = "officerid ", nullable = false)
+    private Long officerId;
 
-  private LocalDate date;
+    @Column(name = "Scope", nullable = false, length = 300)
+    private String scope;
 
-  @Enumerated(EnumType.STRING)
-  private AuditStatus status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "Status", nullable = false, length = 20)
+    @Builder.Default
+    private AuditStatus status = AuditStatus.OPEN;
+
+    @Column(name = "Date", nullable = false)
+    @Builder.Default
+    private LocalDateTime startedAt = LocalDateTime.now();
+
+    @Column(name = "ClosedAt")
+    private LocalDateTime closedAt;
+
+    @Column(name = "ReportUrl", length = 500)
+    private String reportUrl;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "audit", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AuditFinding> findings = new ArrayList<>();
+
+    /** Helper to keep both sides of the association in sync */
+    public void addFinding(AuditFinding finding) {
+        finding.setAudit(this);
+        this.findings.add(finding);
+    }
 }
