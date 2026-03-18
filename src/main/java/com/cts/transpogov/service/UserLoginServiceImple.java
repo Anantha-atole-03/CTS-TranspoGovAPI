@@ -25,29 +25,32 @@ public class UserLoginServiceImple implements IUserLoginService {
 
 	@Autowired
 	private final UserRepository userRepository;
-	
+
 	@Autowired
 	private final ModelMapper modelMapper;
 
 	@Override
 	public User createUser(UserCreateRequest request) {
-		User user=modelMapper.map(request, User.class);
-		System.out.println(user);
-//		User user = User.builder().name(request.getName())
-//				.role(request.getRole())
-//				.email(request.getEmail())
-//				.phone(request.getPhone())
-//				.password(request.getPassword())
-//				.status(request.getStatus())
-//				.createdAt(LocalDateTime.now())
-//				.updatedAt(LocalDateTime.now())
-//				.build();
-		
-		return userRepository.save(user);
-                
+		if (request == null) {
+			throw new IllegalArgumentException("Request cannot be null");
+		}
 
-      
-		 
+		if (request.getPhone() != null) {
+			throw new IllegalArgumentException("User phone should not be provided while creating a new user");
+		}
+		User user = modelMapper.map(request, User.class);
+		if (user.equals(null)) {
+			System.out.println("user is null");
+		}
+
+		if (user == null) {
+			throw new IllegalStateException("Failed to map UserCreateRequest to User");
+		}
+
+		System.out.println(user);
+
+		return userRepository.save(user);
+
 	}
 
 	@Override
@@ -57,6 +60,10 @@ public class UserLoginServiceImple implements IUserLoginService {
 
 	@Override
 	public void UpdateUser(User user, Long userId) {
+
+		if (userId == null || userId <= 0) {
+			throw new IllegalArgumentException("Invalid user UserId");
+		}
 
 		User user2 = userRepository.findById(userId).orElseThrow();
 		user2.setCreatedAt(user.getCreatedAt());
@@ -76,6 +83,9 @@ public class UserLoginServiceImple implements IUserLoginService {
 
 	@Override
 	public void UpdateUserRoles(UserRole userRole, Long userId) {
+		if (userId == null && userRole == null) {
+			throw new IllegalArgumentException("Invalid user UserId and UserRole");
+		}
 		User user2 = userRepository.findById(userId).orElseThrow();
 		user2.setRole(userRole);
 		userRepository.save(user2);
@@ -83,7 +93,10 @@ public class UserLoginServiceImple implements IUserLoginService {
 
 	@Override
 	public User findById(Long id) {
-		// TODO Auto-generated method stub
+		if (id == null) {
+			throw new IllegalArgumentException("Invalid user ID");
+		}
+
 		return userRepository.findById(id).orElse(null);
 	}
 

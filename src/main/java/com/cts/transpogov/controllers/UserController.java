@@ -1,16 +1,11 @@
-  package com.cts.transpogov.controllers;
+package com.cts.transpogov.controllers;
 
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import com.cts.transpogov.dtos.user.UserCreateRequest;
 import com.cts.transpogov.enums.UserRole;
@@ -26,34 +21,36 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
     private final UserRepository userRepository;
-	
-	private final UserLoginServiceImple userLoginServiceImple;
+    private final UserLoginServiceImple userLoginServiceImple;
 
-	
-	@PostMapping("/")
-	public ResponseEntity<User> addUserLogin(@RequestBody UserCreateRequest user){
-		System.out.println(user);
-		return ResponseEntity.status(HttpStatus.CREATED).body(userLoginServiceImple.createUser(user));
-	}
-	@GetMapping("/")
-	public List<User> allUsers(){
-		return userLoginServiceImple.getAllUser();
-	}
-	
-	@PutMapping("/{userId}")
-	public void updateUser(@RequestBody User user,@PathVariable Long userId) {
-		userLoginServiceImple.UpdateUser(user, userId);
-		System.out.println("update User successfully");
-	}
-	@PutMapping("/{userId}/role")
-	public void UpdateRole(@RequestBody UserRole userRole,@PathVariable Long userId) {
-		userLoginServiceImple.UpdateUserRoles(userRole, userId);
-		
-	}
-	@GetMapping("/{id}")
-	public User getuser(@PathVariable Long id) {
-	return userLoginServiceImple.findById(id);
-	}
-	
+    @PreAuthorize("hasRole('ADMINISTRATOR','CITIZEN_PASSENGER')")
+    @PostMapping("/")
+    public ResponseEntity<User> addUser(@RequestBody UserCreateRequest user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userLoginServiceImple.createUser(user));
+    }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR','PROGRAM_MANAGER','GOVERNMENT_AUDITOR')")
+    @GetMapping("/")
+    public List<User> allUsers() {
+        return userLoginServiceImple.getAllUser();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR','PROGRAM_MANAGER')")
+    @PutMapping("/{userId}")
+    public void updateUser(@RequestBody User user, @PathVariable Long userId) {
+        userLoginServiceImple.UpdateUser(user, userId);
+        System.out.println("User updated successfully");
+    }
+
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR','COMPLIANCE_OFFICER')")
+    @PutMapping("/{userId}/role")
+    public void updateRole(@RequestBody UserRole userRole, @PathVariable Long userId) {
+        userLoginServiceImple.UpdateUserRoles(userRole, userId);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR','PROGRAM_MANAGER','GOVERNMENT_AUDITOR','TRANSPORT_OFFICER','COMPLIANCE_OFFICER')")
+    @GetMapping("/{id}")
+    public User getuser(@PathVariable Long id) {
+        return userLoginServiceImple.findById(id);
+    }
 }

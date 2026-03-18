@@ -12,7 +12,7 @@ public class CitizenCreateRequest {
   private LocalDate dob;
   private String gender;
   private String address;
-  private String contactInfo;
+  private String phone;
   private String password;
   private CitizenStatus status;
 }

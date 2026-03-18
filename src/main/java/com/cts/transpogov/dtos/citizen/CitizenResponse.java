@@ -13,6 +13,6 @@ public class CitizenResponse {
   private LocalDate dob;
   private String gender;
   private String address;
-  private String contactInfo;
+  private String phone;
   private CitizenStatus status;
 }
