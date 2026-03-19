@@ -2,73 +2,81 @@ package com.cts.transpogov.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import com.cts.transpogov.dtos.notifications.*;
+import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import com.cts.transpogov.dtos.notifications.NotificationCreateRequest;
+import com.cts.transpogov.dtos.notifications.NotificationResponse;
 import com.cts.transpogov.enums.NotificationStatus;
-import com.cts.transpogov.exceptions.NotificationNotFoundException;
 import com.cts.transpogov.models.Notification;
-import com.cts.transpogov.models.CitizenDocument;
+import com.cts.transpogov.models.User;
 import com.cts.transpogov.repositories.INotificationRepository;
-import com.cts.transpogov.repositories.UserRepository;
-import jakarta.transaction.Transactional;
+import com.cts.transpogov.repositories.IUserRepository;
 
 @Service
 @Transactional
+@Slf4j
+@RequiredArgsConstructor
 public class NotificationService implements INotificationService {
 
-    @Autowired
-    private INotificationRepository notificationRepository;
+	private final INotificationRepository notificationRepository;
+	private final IUserRepository userRepository;
+	private final ModelMapper modelMapper;
 
-    @Autowired
-    private UserRepository userRepository;
+	/*
+	 * Description:Fetches all notifications belonging to the specified user. It
+	 * retrieves the user from the database, fetches all associated notifications,
+	 * and maps them into NotificationResponse DTOs.)
+	 */
 
-    @Override
-    public List<NotificationResponse> getUserNotification(Long userId) {
-        return notificationRepository.findByUserId(userId)
-                .stream()
-                .map(n -> mapToResponse(n, userId))
-                .collect(Collectors.toList());
-    }
+	@Override
+	public List<NotificationResponse> getUserNotifications(Long userId) {
+		log.info("Fetching user notifications for userId={}", userId);
+		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+		return notificationRepository.findByUser(user).stream()
+				.map((notification) -> modelMapper.map(notification, NotificationResponse.class))
+				.collect(Collectors.toList());
+	}
 
-    @Override
-    public NotificationResponse markAsRead(Long notificationId) {
-        Notification n = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new NotificationNotFoundException("Notification not found with ID: " + notificationId));
-        
-        n.setStatus(NotificationStatus.READ);
-        Notification saved = notificationRepository.save(n);
-        return mapToResponse(saved, null);
-    }
+	/*
+	 * Description:Marks a specific notification as READ. It looks up the
+	 * notification by ID, updates its status, save the change, and return the
+	 * updated notification as a NotigicationResponse
+	 */
 
-    @Override
-    public NotificationResponse pushNotification(NotificationCreateRequest request) {
-        // Fetching the citizen record from your restricted UserRepository
-        CitizenDocument citizen = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new RuntimeException("Citizen record not found"));
+	@Override
+	public NotificationResponse markAsRead(Long notificationId) {
+		log.info("Marking notification {} as read", notificationId);
+		Notification notification = notificationRepository.findById(notificationId)
+				.orElseThrow(() -> new RuntimeException("Notification not found"));
+		notification.setStatus(NotificationStatus.READ);
+		return modelMapper.map(notificationRepository.save(notification), NotificationResponse.class);
+	}
 
-        Notification n = Notification.builder()
-                .user(null) // We cast via the query, but for saving we need the object
-                .message(request.getMessage())
-                .category(request.getCategory())
-                .entityId(request.getEntityId())
-                .status(NotificationStatus.UNREAD)
-                .build();
-        
-        // Manual override for the user field if types are conflicting
-        // This ensures the database gets the correct ID
-        return mapToResponse(notificationRepository.save(n), request.getUserId());
-    }
+	/*
+	 * Description: Creates and sends a new notification for a user. It validates
+	 * the user, builds the notification entity using the request data, saves it,
+	 * and returns the newly created notification as a NotificationResponse.
+	 */
 
-    private NotificationResponse mapToResponse(Notification n, Long userId) {
-        return NotificationResponse.builder()
-                .notificationId(n.getNotificationId())
-                .userId(userId)
-                .message(n.getMessage())
-                .category(n.getCategory())
-                .status(n.getStatus())
-                .entityId(n.getEntityId())
-                .createdDate(n.getCreatedDate())
-                .build();
-    }
+	@Override
+	public NotificationResponse pushNotification(NotificationCreateRequest request) {
+
+		log.info("Pushing notification for userId={} with entityId={}", request.getUserId(), request.getEntityId());
+
+		User user = userRepository.findById(request.getUserId())
+				.orElseThrow(() -> new RuntimeException("User not found"));
+
+		Notification notification = Notification.builder().user(user).entityId(request.getEntityId())
+				.message(request.getMessage()).category(request.getCategory()).status(NotificationStatus.UNREAD)
+				.build();
+
+		return modelMapper.map(notificationRepository.save(notification), NotificationResponse.class);
+	}
+
 }

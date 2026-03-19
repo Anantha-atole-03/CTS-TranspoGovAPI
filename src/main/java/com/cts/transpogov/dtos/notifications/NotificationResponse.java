@@ -3,22 +3,31 @@ package com.cts.transpogov.dtos.notifications;
 import java.time.LocalDateTime;
 import com.cts.transpogov.enums.NotificationCategory;
 import com.cts.transpogov.enums.NotificationStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class NotificationResponse {
     private Long notificationId;
-    private Long userId;
-    private String userName; // Useful for the frontend to show who it's for
-    private String entityId;
     private String message;
+    private String entityId;
     private NotificationCategory category;
     private NotificationStatus status;
     private LocalDateTime createdDate;
+
+    // Getters & Setters
+    public Long getNotificationId() { return notificationId; }
+    public void setNotificationId(Long notificationId) { this.notificationId = notificationId; }
+
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
+
+    public String getEntityId() { return entityId; }
+    public void setEntityId(String entityId) { this.entityId = entityId; }
+
+    public NotificationCategory getCategory() { return category; }
+    public void setCategory(NotificationCategory category) { this.category = category; }
+
+    public NotificationStatus getStatus() { return status; }
+    public void setStatus(NotificationStatus status) { this.status = status; }
+
+    public LocalDateTime getCreatedDate() { return createdDate; }
+    public void setCreatedDate(LocalDateTime createdDate) { this.createdDate = createdDate; }
 }
