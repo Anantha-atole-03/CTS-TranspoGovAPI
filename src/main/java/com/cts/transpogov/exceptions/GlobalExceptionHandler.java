@@ -14,10 +14,28 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GlobalExceptionHandler {
 	
+	@ExceptionHandler(TicketStatusException.class)
+	public ResponseEntity<ExceptionResponse> handleTicketStatusException(TicketStatusException e){
+		log.error(e.getClass() +" : " +e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionResponse(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
+	}
+	
+	@ExceptionHandler(TicketNotFoundException.class)
+	public ResponseEntity<ExceptionResponse> handleTicketNotFoundException(TicketNotFoundException e){
+		log.error(e.getClass() +" : " +e.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionResponse(e.getMessage(),HttpStatus.NOT_FOUND.value()));
+	}
+	
+	@ExceptionHandler(CitizenNotFoundException.class)
+	public ResponseEntity<ExceptionResponse> handleCitizenNotFoundException(CitizenNotFoundException e){
+		log.error(e.getClass() +" : " +e.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionResponse(e.getMessage(),HttpStatus.NOT_FOUND.value()));
+	}
+	
 	@ExceptionHandler(ResourceAllocationException.class)
 	public ResponseEntity<ExceptionResponse> handleResourceAllocationException(ResourceAllocationException e){
 		log.error(e.getClass() +" : " +e.getMessage());
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionResponse(e.getMessage(),HttpStatus.NOT_FOUND.value()));
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionResponse(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
 	}
 
 	@ExceptionHandler(ResourceNotFoundException.class)
@@ -35,7 +53,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(IllegalStateException.class)
 	public ResponseEntity<ExceptionResponse> handleIllegalStateException(IllegalStateException e){
 		log.error(e.getClass() +" : " +e.getMessage());
-		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ExceptionResponse(e.getMessage(),HttpStatus.NOT_ACCEPTABLE.value()));
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionResponse(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
 	}
 
 	
