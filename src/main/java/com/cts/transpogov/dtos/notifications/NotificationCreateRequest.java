@@ -1,33 +1,67 @@
 package com.cts.transpogov.dtos.notifications;
 
 import com.cts.transpogov.enums.NotificationCategory;
+
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+
 //@Data
 public class NotificationCreateRequest {
 
-    @NotNull(message = "User ID is required")
-    private Long userId;
+	@NotNull(message = "User ID is required")
+	private Long userId;
 
-    private String entityId;
+	private String entityId;
 
-    @NotBlank(message = "Message cannot be empty")
-    private String message;
+	@NotBlank(message = " Email is required")
+	@Email(message = "Invalid email format")
+	private String email;
 
-    @NotNull(message = "Category is required")
-    private NotificationCategory category;
+	@NotBlank(message = "Message cannot be empty")
+	private String message;
 
-    // Getters & Setters
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+	@NotNull(message = "Category is required")
+	private NotificationCategory category;
 
-    public String getEntityId() { return entityId; }
-    public void setEntityId(String entityId) { this.entityId = entityId; }
+	// Getters & Setters
+	public Long getUserId() {
+		return userId;
+	}
 
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
 
-    public NotificationCategory getCategory() { return category; }
-    public void setCategory(NotificationCategory category) { this.category = category; }
+	public String getEntityId() {
+		return entityId;
+	}
+
+	public void setEntityId(String entityId) {
+		this.entityId = entityId;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public NotificationCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(NotificationCategory category) {
+		this.category = category;
+	}
 }
