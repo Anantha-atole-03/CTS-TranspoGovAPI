@@ -15,56 +15,93 @@ import com.cts.transpogov.repositories.TransportProgramRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * Service layer implementation for Transport Program operations.
+ * 
+ * @Service → Marks this class as a Spring service component. @Transactional→
+ *          Ensures all DB operations are executed within a transaction.
+ * @RequiredArgsConstructor → Generates constructor for final fields (Dependency
+ *                          Injection).
+ * @Slf4j → Enables logging using SLF4J.
+ */
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class TransportProgramServiceImpl implements ITransportProgramService {
 
 	private final TransportProgramRepository programRepository;
+	// ModelMapper for Entity ↔ DTO conversion
 	private final ModelMapper modelMapper;
 
+	/**
+	 * Fetches all transport programs. Converts entity list to response DTO list.
+	 */
 	@Override
 	public List<ProgramResponse> getAllPrograms() {
 
-		return programRepository.findAll().stream().map(program -> modelMapper.map(program, ProgramResponse.class))
-				.collect(Collectors.toList());
+		return programRepository.findAll().stream()
+				// Mapping each TransportProgram entity to ProgramResponse DTO
+				.map(program -> modelMapper.map(program, ProgramResponse.class)).collect(Collectors.toList());
 
 	}
 
+	/**
+	 * Fetch a single program by ID. Throws exception if program does not exist.
+	 */
 	@Override
 	public ProgramResponse getProgram(Long programId) {
 		TransportProgram program = programRepository.findById(programId)
 				.orElseThrow(() -> new ProgramNotFoundException("Program not found!"));
+		log.info("Id: {} Program Fetched!", programId);
 		return modelMapper.map(program, ProgramResponse.class);
 	}
 
+	/**
+	 * Creates a new program. Initial status is always set to DRAFT.
+	 */
 	@Override
 	public String addProgram(ProgramCreateRequest program) {
 		TransportProgram program2 = modelMapper.map(program, TransportProgram.class);
 		program2.setStatus(ProgramStatus.DRAFT);
 		programRepository.save(program2);
+		log.info("Id: {} Program Saved!", program2.getProgramId());
 		return "Program Successfuly Added!";
 	}
 
+	/**
+	 * Submits a program for approval. Status changes from DRAFT → SUBMITTED.
+	 */
 	@Override
 	public String submitForApproval(Long programId) {
 		TransportProgram program = programRepository.findById(programId)
 				.orElseThrow(() -> new ProgramNotFoundException("Program not found!"));
 		program.setStatus(ProgramStatus.SUBMITTED);
 		programRepository.save(program);
+		log.info("Id: {} Program submitted for Approve!", program.getProgramId());
 		return "Program successfully submitted for Approvel!";
 	}
 
+	/**
+	 * Approves a submitted program.
+	 */
 	@Override
 	public String approveProgram(Long programId) {
 		TransportProgram program = programRepository.findById(programId)
 				.orElseThrow(() -> new ProgramNotFoundException("Program not found!"));
 		program.setStatus(ProgramStatus.APPROVED);
 		programRepository.save(program);
+		log.info("Id: {} Program Approved!", program.getProgramId());
 		return "Program successfully Approved!";
 	}
 
+	/**
+	 * Generic method to change program status. Prevents unnecessary updates if
+	 * status is unchanged.
+	 */
 	@Override
 	public String changeProgramStatus(Long programId, ProgramStatus newStatus) {
 
@@ -72,6 +109,7 @@ public class TransportProgramServiceImpl implements ITransportProgramService {
 				.orElseThrow(() -> new ProgramNotFoundException("Program not found: " + programId));
 
 		ProgramStatus current = program.getStatus();
+		// Avoid unnecessary DB update
 		if (current == newStatus) {
 			return "No change: program status is already " + current.name() + ".";
 		}
@@ -84,6 +122,9 @@ public class TransportProgramServiceImpl implements ITransportProgramService {
 		return "Program status changed from " + current.name() + " to " + newStatus.name() + ".";
 	}
 
+	/**
+	 * Deletes a program and returns deleted program details.
+	 */
 	@Override
 	public ProgramResponse deleteProgram(Long programId) {
 		TransportProgram program = programRepository.findById(programId)
@@ -91,7 +132,11 @@ public class TransportProgramServiceImpl implements ITransportProgramService {
 		programRepository.delete(program);
 		return modelMapper.map(program, ProgramResponse.class);
 	}
-	
+
+	/**
+	 * Updates program fields selectively (partial update). Only non-null /
+	 * non-blank fields are updated.
+	 */
 	@Override
 	public ProgramResponse updateProgram(Long programId, ProgramUpdateRequest updateRequest) {
 		TransportProgram program = programRepository.findById(programId)
@@ -100,14 +145,18 @@ public class TransportProgramServiceImpl implements ITransportProgramService {
 			program.setTitle(updateRequest.getTitle());
 		if (!updateRequest.getDescription().isBlank())
 			program.setDescription(updateRequest.getDescription());
-		if (updateRequest.getStartDate()!=null)
+		if (updateRequest.getStartDate() != null)
 			program.setStartDate(updateRequest.getStartDate());
-		if (updateRequest.getEndDate()!=null)
+		if (updateRequest.getEndDate() != null)
 			program.setEndDate(updateRequest.getEndDate());
 		programRepository.save(program);
 		return modelMapper.map(program, ProgramResponse.class);
 	}
 
+	/**
+	 * Validates allowed status transitions based on business rules. Prevents
+	 * illegal state changes.
+	 */
 	private void validateTransition(ProgramStatus from, ProgramStatus to, TransportProgram program) {
 
 		switch (from) {
@@ -131,14 +180,12 @@ public class TransportProgramServiceImpl implements ITransportProgramService {
 				throw new IllegalStateException("Cannot change status from ON HOLD to " + to);
 			}
 		}
-		case COMPLETED, CANCELLED -> 
+		case COMPLETED, CANCELLED ->
 			throw new IllegalStateException("Status " + from + " is terminal. Change to " + to + " is not allowed.");
 		default -> {
 		}
 		}
 
 	}
-
-	
 
 }

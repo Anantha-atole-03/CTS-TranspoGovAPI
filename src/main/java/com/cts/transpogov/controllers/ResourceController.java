@@ -25,60 +25,103 @@ import com.cts.transpogov.service.IResourceService;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/resources")
 @RequiredArgsConstructor
 @Validated
+@Slf4j
 public class ResourceController {
 
 	private final IResourceService resourceService;
-	
-	
-	private static final Logger log=LoggerFactory.getLogger(ResourceController.class);
-	
+
+	private static final Logger log = LoggerFactory.getLogger(ResourceController.class);
+
+	/*
+	 * Method: GET Description: It fetch all resources return:
+	 * ResponseEntity<ApiResponse> type
+	 */
 	@GetMapping("/")
 	public ResponseEntity<ApiResponse<List<ResourceResponse>>> getAllResources() {
+		log.info("All resources feteched!");
 		return ResponseEntity.ok(new ApiResponse<>("Resource fetched successfully", HttpStatus.OK.value(),
 				resourceService.getAllResouces()));
 	}
+
+	/*
+	 * Method: GET Argument: resourceId - Type- Long Description: It fetch all
+	 * resource by provided id return: ResponseEntity<ApiResponse> type
+	 */
 	@GetMapping("/{resourceId}")
 	public ResponseEntity<ApiResponse<ResourceResponse>> getResource(@PathVariable Long resourceId) {
-		log.info("Resource feteched");
+		log.info("Resource with id {} feteched", resourceId);
 		return ResponseEntity.ok(new ApiResponse<>("Resource fetched successfully", HttpStatus.OK.value(),
 				resourceService.getResource(resourceId)));
 	}
 
+	/*
+	 * Method: GET Argument: resourceId - Type- Long Description: It fetch all
+	 * resource by provided program id return: ResponseEntity<ApiResponse> type
+	 */
 	@GetMapping("")
-	public ResponseEntity<ApiResponse<List<ResourceResponse>>> getAllResourcesByProgram(@RequestParam @NotNull(message = "Program id is required") Long programId) {
+	public ResponseEntity<ApiResponse<List<ResourceResponse>>> getAllResourcesByProgram(
+			@RequestParam @NotNull(message = "Program id is required") Long programId) {
+		log.info("Resource with program id {} feteched", programId);
 		return ResponseEntity.ok(new ApiResponse<>("Resource fetched successfully", HttpStatus.OK.value(),
 				resourceService.getAllResoucesByProgramId(programId)));
 	}
 
+	/*
+	 * Method: POST Argument: Resource Request Dto Description: Accepts Resource
+	 * Request Dto and call add Resource method return: ResponseEntity<ApiResponse>
+	 * type
+	 */
 	@PostMapping("/")
-	public ResponseEntity<ApiResponse<String>> addResource(@RequestBody @NotNull(message = "Resource data required") ResourceCreateRequest createRequest) {
-	
+	public ResponseEntity<ApiResponse<String>> addResource(
+			@RequestBody @NotNull(message = "Resource data required") ResourceCreateRequest createRequest) {
+		log.info("new Resource added");
 		return ResponseEntity.status(HttpStatus.CREATED)
 				.body(new ApiResponse<>(resourceService.addResouce(createRequest), HttpStatus.CREATED.value(), null));
 	}
 
+	/*
+	 * Method: PATCH Argument: Resource id and Status Description: Accepts Resource
+	 * id and status and call service method return: ResponseEntity<ApiResponse>
+	 * type
+	 */
 	@PatchMapping("/{resourceId}")
-	public ResponseEntity<ApiResponse<String>> changeResourceStatus(@PathVariable @NotNull(message = "Resource Id required") Long resourceId,
+	public ResponseEntity<ApiResponse<String>> changeResourceStatus(
+			@PathVariable @NotNull(message = "Resource Id required") Long resourceId,
 			@NotNull(message = "Resource Status required") @RequestParam ResourceStatus status) {
+		log.info("Resource status changed id:{} status:{}", resourceId, status);
 		return ResponseEntity.ok(new ApiResponse<>(resourceService.changeResourcStatus(resourceId, status),
 				HttpStatus.OK.value(), null));
 
 	}
+
+	/*
+	 * Method: PATCH Argument: Resource id Description: Accepts Resource id and call
+	 * service method return: ResponseEntity<ApiResponse> type
+	 */
 	@PatchMapping("/{resourceId}/allocate")
-	public ResponseEntity<ApiResponse<String>> allocateResource(@PathVariable @NotNull(message = "Resource Id required") Long resourceId) {
-		return ResponseEntity.ok(new ApiResponse<>(resourceService.allocateResouce(resourceId),
-				HttpStatus.OK.value(), null));
+	public ResponseEntity<ApiResponse<String>> allocateResource(
+			@PathVariable @NotNull(message = "Resource Id required") Long resourceId) {
+		log.info("Resource allocated id:{} ", resourceId);
+		return ResponseEntity
+				.ok(new ApiResponse<>(resourceService.allocateResouce(resourceId), HttpStatus.OK.value(), null));
 
 	}
+
+	/*
+	 * Method: DELETE Argument: Resource id Description: Accepts Resource id and
+	 * call deleteResource() service method return: ResponseEntity<ApiResponse> type
+	 */
 	@DeleteMapping("/{resourceId}")
 	public ResponseEntity<ApiResponse<String>> deleteResource(@PathVariable Long resourceId) {
-		return ResponseEntity.ok(new ApiResponse<>(resourceService.deleteResouce(resourceId),
-				HttpStatus.OK.value(), null));
+		log.info("Resource deleted with id:{} ", resourceId);
+		return ResponseEntity
+				.ok(new ApiResponse<>(resourceService.deleteResouce(resourceId), HttpStatus.OK.value(), null));
 
 	}
 
