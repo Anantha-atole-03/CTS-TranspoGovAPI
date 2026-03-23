@@ -1,11 +1,8 @@
 package com.cts.transpogov.exceptions;
 
-
-public class ResourceNotFoundException extends RuntimeException {
-	private static final long serialVersionUID = 1L;
-
-	public ResourceNotFoundException(String msg) {
-		super(msg);
+public class ResourceNotFoundException {
+	public ResourceNotFoundException(String str) {
+		super();
 	}
 
 }
