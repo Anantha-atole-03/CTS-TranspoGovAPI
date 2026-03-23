@@ -1,9 +1,14 @@
 package com.cts.transpogov.models;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.cts.transpogov.enums.UserRole;
 import com.cts.transpogov.enums.UserStatus;
@@ -30,18 +35,21 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
-public class User {
+public class User implements UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "user_id", updatable = false, nullable = false)
 	private Long userId;
+
 	private String name;
+
 	@Enumerated(EnumType.STRING)
 	private UserRole role;
+
 	private String email;
 	private String phone;
 	private String password;
+
 	@Enumerated(EnumType.STRING)
 	private UserStatus status;
 
@@ -50,17 +58,13 @@ public class User {
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
 
-	public User(String name, UserRole role, String email, String phone, String password, UserStatus status,
-			LocalDateTime createdAt, LocalDateTime updatedAt) {
-		super();
-		this.name = name;
-		this.role = role;
-		this.email = email;
-		this.phone = phone;
-		this.password = password;
-		this.status = status;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return List.of(new SimpleGrantedAuthority("ROLE_" + role));
 	}
 
+	@Override
+	public String getUsername() {
+		return phone;
+	}
 }

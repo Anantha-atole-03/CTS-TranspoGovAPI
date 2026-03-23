@@ -8,11 +8,11 @@ import lombok.Data;
 
 @Data
 public class CitizenResponse {
-  private Long citizenId;
-  private String name;
-  private LocalDate dob;
-  private String gender;
-  private String address;
-  private String phone;
-  private CitizenStatus status;
+	private Long citizenId;
+	private String name;
+	private LocalDate dob;
+	private String gender;
+	private String address;
+	private String phone;
+	private CitizenStatus status;
 }

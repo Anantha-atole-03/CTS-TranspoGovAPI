@@ -6,7 +6,7 @@ import com.cts.transpogov.dtos.citizen.CitizenResponse;
 import com.cts.transpogov.dtos.citizen.CitizenUpdateRequest;
 
 public interface ICitizenService {
-    
+    CitizenResponse save(CitizenCreateRequest requestDto);
     CitizenResponse addCitizen(CitizenCreateRequest request);
     
     CitizenResponse updateCitizen(Long id, CitizenUpdateRequest request);
