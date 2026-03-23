@@ -1,8 +1,7 @@
 package com.cts.transpogov.dtos.ticket;
 
 
-
-import com.cts.transpogov.enums.TicketStatus;
+import java.time.LocalDateTime;
 
 import lombok.Data;
 
@@ -10,7 +9,7 @@ import lombok.Data;
 public class TicketCreateRequest {
   private Long citizenId;
   private Long routeId;
-  private Long date;
+  private LocalDateTime date;
   private Double fareAmount;
-  private TicketStatus status; 
+//  private TicketStatus status; 
 }

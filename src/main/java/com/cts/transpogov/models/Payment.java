@@ -2,6 +2,8 @@ package com.cts.transpogov.models;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import com.cts.transpogov.enums.PaymentStatus;
 
 import jakarta.persistence.Column;
@@ -36,4 +38,6 @@ public class Payment {
 
   @Enumerated(EnumType.STRING)
   private PaymentStatus status;
+  @CreationTimestamp
+  private LocalDateTime createdAt;
 }

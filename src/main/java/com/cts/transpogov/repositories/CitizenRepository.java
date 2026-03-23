@@ -2,8 +2,8 @@ package com.cts.transpogov.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.cts.transpogov.models.User;
+import com.cts.transpogov.models.Citizen;
 
-public interface CitizenRepository extends JpaRepository<User, Long> {
+public interface CitizenRepository extends JpaRepository<Citizen, Long> {
 
 }
