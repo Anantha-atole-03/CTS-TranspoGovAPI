@@ -2,6 +2,7 @@ package com.cts.transpogov.models;
 
 
 import com.cts.transpogov.enums.ResourceStatus;
+import com.cts.transpogov.enums.ResourceType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +15,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,11 +31,17 @@ public class Resource {
   private Long resourceId;
 
   @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "program_id")
+  @NotNull(message = "Program details required")
   private TransportProgram program; 
 
-  private String type; 
-  private Double quantity;
+  @NotNull(message = "Resource type required")
+  @Enumerated(EnumType.STRING)
+  private ResourceType type; 
+  @Positive(message = "Resource quantity shold be positive")
+  @NotNull(message = "Resource type required")
+  private int quantity;
 
+  @NotNull(message = "Resource status required")
   @Enumerated(EnumType.STRING)
   private ResourceStatus status;
 }

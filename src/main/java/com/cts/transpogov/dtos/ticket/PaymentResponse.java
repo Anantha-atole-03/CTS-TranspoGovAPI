@@ -13,4 +13,5 @@ public class PaymentResponse {
   private String method;
   private LocalDateTime date;
   private PaymentStatus status;
+  private LocalDateTime createdAt;
 }
