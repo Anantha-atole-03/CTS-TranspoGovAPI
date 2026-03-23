@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.cts.transpogov.models.Citizen;
+import com.cts.transpogov.models.User;
 
 public interface CitizenRepository extends JpaRepository<Citizen, Long> {
 	Optional<Citizen> findByPhone(String phone);
