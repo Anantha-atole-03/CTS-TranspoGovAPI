@@ -1,103 +1,102 @@
 package com.cts.transpogov.service;
 
-import java.net.Authenticator.RequestorType;
-import java.time.LocalDateTime;
 import java.util.List;
-
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.cts.transpogov.dtos.user.UserCreateRequest;
-import com.cts.transpogov.dtos.user.UserResponse;
 import com.cts.transpogov.enums.UserRole;
 import com.cts.transpogov.models.User;
 import com.cts.transpogov.repositories.UserRepository;
 
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j; 
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j 
 public class UserLoginServiceImple implements IUserLoginService {
 
-	@Autowired
-	private final UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
-	@Autowired
-	private final ModelMapper modelMapper;
+    @Override
+    public User createUser(UserCreateRequest request) {
+        log.info("Attempting to create user with email: {}", request.getEmail());
+        
+        if (request == null) {
+            log.error("User creation failed: Request object is null");
+            throw new IllegalArgumentException("Request cannot be null");
+        }
 
-	@Override
-	public User createUser(UserCreateRequest request) {
-		if (request == null) {
-			throw new IllegalArgumentException("Request cannot be null");
-		}
+        User user = modelMapper.map(request, User.class);
+        
+        if (user == null) {
+            log.error("Mapping failure: ModelMapper returned null for UserCreateRequest");
+            throw new IllegalStateException("Failed to map UserCreateRequest to User");
+        }
 
-		if (request.getPhone() != null) {
-			throw new IllegalArgumentException("User phone should not be provided while creating a new user");
-		}
-		User user = modelMapper.map(request, User.class);
-		if (user.equals(null)) {
-			System.out.println("user is null");
-		}
+        User savedUser = userRepository.save(user);
+        log.info("User successfully created with ID: {}", savedUser.getUserId());
+        return savedUser;
+    }
 
-		if (user == null) {
-			throw new IllegalStateException("Failed to map UserCreateRequest to User");
-		}
+    @Override
+    public List<User> getAllUser() {
+        log.debug("Fetching all users from database");
+        return userRepository.findAll();
+    }
 
-		System.out.println(user);
+    @Override
+    public void UpdateUser(User user, Long userId) {
+        log.info("Attempting to update user details for ID: {}", userId);
 
-		return userRepository.save(user);
+        if (userId == null || userId <= 0) {
+            log.warn("Update failed: Invalid userId provided: {}", userId);
+            throw new IllegalArgumentException("Invalid user UserId");
+        }
 
-	}
+        User existingUser = userRepository.findById(userId)
+            .orElseThrow(() -> {
+                log.error("Update failed: User with ID {} not found", userId);
+                return new RuntimeException("User not found");
+            });
 
-	@Override
-	public List<User> getAllUser() {
-		return userRepository.findAll();
-	}
+        modelMapper.map(user, existingUser);
+        existingUser.setUserId(userId);
 
-	@Override
-	public void UpdateUser(User user, Long userId) {
+        userRepository.save(existingUser);
+        log.info("User with ID: {} updated successfully", userId);
+    }
 
-		if (userId == null || userId <= 0) {
-			throw new IllegalArgumentException("Invalid user UserId");
-		}
+    @Override
+    public void UpdateUserRoles(UserRole userRole, Long userId) {
+        log.info("Updating role to {} for user ID: {}", userRole, userId);
+        
+        if (userId == null || userRole == null) {
+            log.warn("Role update failed: userId or userRole is null");
+            throw new IllegalArgumentException("Invalid user UserId or UserRole");
+        }
 
-		User user2 = userRepository.findById(userId).orElseThrow();
-		user2.setCreatedAt(user.getCreatedAt());
-		user2.setEmail(user.getEmail());
-		user2.setName(user.getName());
-		user2.setPassword(user.getPassword());
-		user2.setPhone(user.getPhone());
-		user2.setRole(user.getRole());
-		user2.setStatus(user.getStatus());
-		user2.setUpdatedAt(user.getUpdatedAt());
-		user2.setUserId(user.getUserId());
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> {
+                log.error("Role update failed: User {} not found", userId);
+                return new RuntimeException("User not found");
+            });
 
-		userRepository.save(user2);
-		System.out.println("update Information Successfully...!");
+        user.setRole(userRole);
+        userRepository.save(user);
+        log.info("Role updated successfully for user ID: {}", userId);
+    }
 
-	}
-
-	@Override
-	public void UpdateUserRoles(UserRole userRole, Long userId) {
-		if (userId == null && userRole == null) {
-			throw new IllegalArgumentException("Invalid user UserId and UserRole");
-		}
-		User user2 = userRepository.findById(userId).orElseThrow();
-		user2.setRole(userRole);
-		userRepository.save(user2);
-	}
-
-	@Override
-	public User findById(Long id) {
-		if (id == null) {
-			throw new IllegalArgumentException("Invalid user ID");
-		}
-
-		return userRepository.findById(id).orElse(null);
-	}
-
+    @Override
+    public User findById(Long id) {
+        log.debug("Finding user by ID: {}", id);
+        if (id == null) {
+            log.warn("findById called with null ID");
+            throw new IllegalArgumentException("Invalid user ID");
+        }
+        return userRepository.findById(id).orElse(null);
+    }
 }
