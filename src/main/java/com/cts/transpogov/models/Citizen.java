@@ -2,11 +2,17 @@ package com.cts.transpogov.models;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.cts.transpogov.enums.CitizenStatus;
+import com.cts.transpogov.enums.UserRole;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,24 +28,43 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity @Table(name = "citizens")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class Citizen {
-  @Id @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "citizen_id", updatable = false, nullable = false)
-  private Long citizenId;
+@Entity
+@Table(name = "citizens")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Citizen implements UserDetails {
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "citizen_id", updatable = false, nullable = false)
+	private Long citizenId;
 
-  private String name;
-  private LocalDate dob;
-  private String gender;
-  private String address;
-  @Column(name = "contact_info", columnDefinition = "text")
-  private String contactInfo;
-  private String password;
+	private String name;
+	private LocalDate dob;
+	private String gender;
+	private String address;
+	@Column(name = "contact_info", columnDefinition = "text")
+	private String phone;
+	private String password;
+	private UserRole role;
 
-  @Enumerated(EnumType.STRING)
-  private CitizenStatus status;
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return List.of(new SimpleGrantedAuthority("ROLE_" + role));
+	}
 
-  @CreationTimestamp private LocalDateTime createdAt;
-  @UpdateTimestamp private LocalDateTime updatedAt;
+	@Override
+	public String getUsername() {
+		return phone;
+	}
+
+	@Enumerated(EnumType.STRING)
+	private CitizenStatus status;
+
+	@CreationTimestamp
+	private LocalDateTime createdAt;
+	@UpdateTimestamp
+	private LocalDateTime updatedAt;
 }
