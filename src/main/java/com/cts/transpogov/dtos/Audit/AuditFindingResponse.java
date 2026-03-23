@@ -2,10 +2,12 @@ package com.cts.transpogov.dtos.Audit;
 
 
 
-import com.cts.transpogov.enums.Severity;
-
 import java.time.LocalDateTime;
 
+import com.cts.transpogov.enums.Severity;
+
+import lombok.Data;
+@Data
 public class AuditFindingResponse {
     private Long id;
     private String title;

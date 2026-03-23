@@ -40,6 +40,8 @@ public class ComplianceRecordController {
 				.body(new ApiResponse<>(message, HttpStatus.CREATED.value(), null));
 	}
 
+
+
 	@PutMapping("/update/{id}")
 	public ResponseEntity<ApiResponse<ComplianceResponse>> update(@PathVariable Long id,
 			@RequestBody ComplianceCreateRequest body) {

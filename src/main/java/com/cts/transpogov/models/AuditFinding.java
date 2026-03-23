@@ -43,4 +43,6 @@ public class AuditFinding {
     @Column(nullable = false)
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
+
+	
 }

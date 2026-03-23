@@ -1,6 +1,21 @@
 package com.cts.transpogov.service;
 
-import com.cts.transpogov.dtos.Audit.*;
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import com.cts.transpogov.dtos.Audit.AddFindingRequest;
+import com.cts.transpogov.dtos.Audit.AuditFindingResponse;
+import com.cts.transpogov.dtos.Audit.AuditResponse;
+import com.cts.transpogov.dtos.Audit.CreateAuditRequest;
+import com.cts.transpogov.dtos.Audit.GenerateReportResponse;
+import com.cts.transpogov.dtos.Audit.PageResponse;
+import com.cts.transpogov.dtos.Audit.UpdateAuditRequest;
 import com.cts.transpogov.enums.AuditStatus;
 import com.cts.transpogov.exceptions.AuditNotFoundException;
 import com.cts.transpogov.models.Audit;
@@ -10,16 +25,12 @@ import com.cts.transpogov.repositories.AuditRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.data.domain.*;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class AuditService implements IAuditService {
 
 	private final AuditRepository auditRepository;
@@ -27,12 +38,16 @@ public class AuditService implements IAuditService {
 
 	@Override
 	public AuditResponse createAudit(CreateAuditRequest req) {
+		log.info("Creating audit for officerId: {}, scope: {}", req.getOfficerId(), req.getScope());
 		Audit a = new Audit();
 		a.setOfficerId(req.getOfficerId());
 		a.setScope(req.getScope());
 		a.setStatus(AuditStatus.OPEN);
 		a.setStartedAt(LocalDateTime.now());
-		return toAuditResponse(auditRepository.save(a), true);
+
+		Audit saved = auditRepository.save(a);
+		log.info("Audit created with id: {}, status: {}", saved.getId(), saved.getStatus());
+		return toAuditResponse(saved, true);
 	}
 
 	@Override
@@ -43,6 +58,9 @@ public class AuditService implements IAuditService {
 		int p = (page == null ? 0 : page);
 		int s = (size == null ? 20 : size);
 		Pageable pageable = PageRequest.of(p, s, sortObj);
+
+		log.info("Listing audits page={}, size={}, sort={}, filters: status={}, officerId={}, scopeContains={}", p, s,
+				sort, status, officerId, scopeContains);
 
 		Page<Audit> paged = auditRepository.findAll(pageable);
 
@@ -63,21 +81,33 @@ public class AuditService implements IAuditService {
 		resp.setPage(paged.getNumber());
 		resp.setSize(paged.getSize());
 
+		log.info("Audits listed: returned={}, totalElements={}, totalPages={}, page={}, size={}", filtered.size(),
+				paged.getTotalElements(), paged.getTotalPages(), paged.getNumber(), paged.getSize());
+
 		return resp;
 	}
 
 	@Override
 	public AuditResponse getAudit(Long id) {
-		Audit a = auditRepository.findById(id).orElseThrow(() -> new AuditNotFoundException("Audit not found: " + id));
+		log.info("Fetching audit by id: {}", id);
+		Audit a = auditRepository.findById(id).orElseThrow(() -> {
+			log.warn("Audit not found for id: {}", id);
+			return new AuditNotFoundException("Audit not found: " + id);
+		});
+		log.info("Audit fetched id: {}, status: {}", a.getId(), a.getStatus());
 		return toAuditResponse(a, true);
 	}
 
 	@Override
 	public AuditFindingResponse addFinding(Long auditId, AddFindingRequest req) {
-		Audit audit = auditRepository.findById(auditId)
-				.orElseThrow(() -> new AuditNotFoundException("Audit not found: " + auditId));
+		log.info("Adding finding to auditId: {}, title: {}", auditId, req.getTitle());
+		Audit audit = auditRepository.findById(auditId).orElseThrow(() -> {
+			log.warn("Audit not found for addFinding, id: {}", auditId);
+			return new AuditNotFoundException("Audit not found: " + auditId);
+		});
 
 		if (audit.getStatus() == AuditStatus.CLOSED) {
+			log.warn("Attempt to add finding to CLOSED audit, id: {}", auditId);
 			throw new IllegalArgumentException("Cannot add finding to a CLOSED audit");
 		}
 
@@ -89,13 +119,18 @@ public class AuditService implements IAuditService {
 		f.setStatus("OPEN");
 		f.setCreatedAt(LocalDateTime.now());
 
-		return toFindingResponse(findingRepository.save(f));
+		AuditFinding saved = findingRepository.save(f);
+		log.info("Finding added id: {} to auditId: {}", saved.getId(), auditId);
+		return toFindingResponse(saved);
 	}
 
 	@Override
 	public GenerateReportResponse generateReport(Long auditId) {
-		Audit a = auditRepository.findById(auditId)
-				.orElseThrow(() -> new AuditNotFoundException("Audit not found: " + auditId));
+		log.info("Generating report for auditId: {}", auditId);
+		Audit a = auditRepository.findById(auditId).orElseThrow(() -> {
+			log.warn("Audit not found for generateReport, id: {}", auditId);
+			return new AuditNotFoundException("Audit not found: " + auditId);
+		});
 
 		String url = "https://reports.transpogov.local/audits/" + a.getId() + "/report-" + System.currentTimeMillis()
 				+ ".pdf";
@@ -106,22 +141,31 @@ public class AuditService implements IAuditService {
 		resp.setAuditId(a.getId());
 		resp.setReportUrl(url);
 		resp.setGeneratedAt(LocalDateTime.now());
+
+		log.info("Report generated for auditId: {}, url: {}", a.getId(), url);
 		return resp;
 	}
 
 	@Override
 	public AuditResponse closeAudit(Long auditId) {
-		Audit a = auditRepository.findById(auditId)
-				.orElseThrow(() -> new AuditNotFoundException("Audit not found: " + auditId));
+		log.info("Closing audit id: {}", auditId);
+		Audit a = auditRepository.findById(auditId).orElseThrow(() -> {
+			log.warn("Audit not found for closeAudit, id: {}", auditId);
+			return new AuditNotFoundException("Audit not found: " + auditId);
+		});
 
 		boolean anyOpen = a.getFindings().stream().anyMatch(f -> !"RESOLVED".equalsIgnoreCase(f.getStatus()));
 		if (anyOpen) {
+			log.warn("Cannot close audit id: {} — unresolved findings exist", auditId);
 			throw new IllegalArgumentException("Cannot close audit: unresolved findings exist");
 		}
 
 		a.setStatus(AuditStatus.CLOSED);
 		a.setClosedAt(LocalDateTime.now());
-		return toAuditResponse(auditRepository.save(a), true);
+		Audit saved = auditRepository.save(a);
+
+		log.info("Audit closed id: {}, closedAt: {}", saved.getId(), saved.getClosedAt());
+		return toAuditResponse(saved, true);
 	}
 
 	/* ----------------- helpers ----------------- */
@@ -163,4 +207,50 @@ public class AuditService implements IAuditService {
 		dto.setCreatedAt(f.getCreatedAt());
 		return dto;
 	}
+
+	@Override
+	public String delete(Long id) {
+		log.info("Deleting udit record id: {}", id);
+		Audit audit = auditRepository.findById(id).orElseThrow(() -> {
+			log.warn("Compliance record not found for deletion, id: {}", id);
+			return new AuditNotFoundException("Audit Record not found");
+		});
+//		auditRepository.deleteById(audit.getId());
+		audit.setStatus(AuditStatus.DELETED);
+		auditRepository.save(audit);
+		log.info("Compliance record deleted, id: {}", audit.getId());
+		return "Record deleted Succesfully";
+	}
+
+	@Override
+	public AuditResponse update(Long id, UpdateAuditRequest req) {
+	    log.info("Updating audit record id: {}", id);
+
+	    Audit existing = auditRepository.findById(id)
+	            .orElseThrow(() -> {
+	                log.warn("Audit record not found for update, id: {}", id);
+	                return new AuditNotFoundException("Audit Record not found");
+	            });
+
+	    // Update allowed fields
+	   
+	    existing.setScope(req.getScope());
+
+	    // Optional: allow status update only if provided
+	    if (req.getStatus() != null) {
+	        existing.setStatus(req.getStatus());
+	    }
+
+	    Audit saved = auditRepository.save(existing);
+	    log.info("Audit record updated, id: {}", saved.getId());
+
+	    return toAuditResponse(saved, true);
+	}
+
+	  @Override
+	    public Long getCount() {
+	        Long count = auditRepository.count();
+	        log.info("Audits records count: {}", count);
+	        return count;
+	    }
 }

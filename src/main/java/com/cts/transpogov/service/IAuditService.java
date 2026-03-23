@@ -6,10 +6,13 @@ import com.cts.transpogov.dtos.Audit.AuditResponse;
 import com.cts.transpogov.dtos.Audit.CreateAuditRequest;
 import com.cts.transpogov.dtos.Audit.GenerateReportResponse;
 import com.cts.transpogov.dtos.Audit.PageResponse;
+import com.cts.transpogov.dtos.Audit.UpdateAuditRequest;
 
 public interface IAuditService {
 
 	AuditResponse createAudit(CreateAuditRequest req);
+
+	String delete(Long id);
 
 	PageResponse<AuditResponse> listAudits(Integer page, Integer size, String sort, String status, Long officerId,
 			String scopeContains);
@@ -21,4 +24,10 @@ public interface IAuditService {
 	GenerateReportResponse generateReport(Long auditId);
 
 	AuditResponse closeAudit(Long auditId);
+
+	AuditResponse update(Long id, UpdateAuditRequest req);
+	
+
+	Long getCount();
+
 }

@@ -7,7 +7,7 @@ import com.cts.transpogov.dtos.Audit.AuditResponse;
 import com.cts.transpogov.dtos.Audit.CreateAuditRequest;
 import com.cts.transpogov.dtos.Audit.GenerateReportResponse;
 import com.cts.transpogov.dtos.Audit.PageResponse;
-import com.cts.transpogov.service.AuditService;
+import com.cts.transpogov.dtos.Audit.UpdateAuditRequest;
 import com.cts.transpogov.service.IAuditService;
 
 import jakarta.validation.Valid;
@@ -21,9 +21,12 @@ public class AuditController {
 
     private final IAuditService auditService;
 
-    public AuditController(AuditService auditService) {
+    
+    public AuditController(IAuditService auditService) {
         this.auditService = auditService;
     }
+    
+    
 
     /* ========= POST /audits — Create audit ========= */
     @PostMapping("/save_audits")
@@ -33,6 +36,22 @@ public class AuditController {
                 .body(new ApiResponse<>("CREATED", HttpStatus.CREATED.value(), dto));
     }
 
+    @DeleteMapping("/delete/{id}")
+	public ResponseEntity<ApiResponse<String>> delete(@PathVariable Long id) {
+		String message = auditService.delete(id);
+		return ResponseEntity.ok(new ApiResponse<>(message, HttpStatus.OK.value(), null));
+	}
+    
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ApiResponse<AuditResponse>> update(@PathVariable long id ,@RequestBody UpdateAuditRequest body)
+    {
+    	AuditResponse updated = auditService.update(id, body);
+    	return ResponseEntity.ok(new ApiResponse<>("Record updated successfully", HttpStatus.OK.value(), updated));
+    }
+    
+    
+    
+    
     /* ========= GET /audits — List audits (filters, pagination) ========= */
     @GetMapping("/audits_lists")
     public ResponseEntity<ApiResponse<PageResponse<AuditResponse>>> list(
@@ -78,4 +97,11 @@ public class AuditController {
         AuditResponse dto = auditService.closeAudit(id);
         return ResponseEntity.ok(new ApiResponse<>("Audit closed!", HttpStatus.OK.value(), dto));
     }
+    
+	// GET /compliances/summary
+	@GetMapping("/summary")
+	public ResponseEntity<ApiResponse<Long>> getCount() {
+		Long count = auditService.getCount();
+		return ResponseEntity.ok(new ApiResponse<>("Count fetched!", HttpStatus.OK.value(), count));
+	}
 }
