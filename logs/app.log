@@ -1,0 +1,77 @@
+2026-03-24T08:19:22.680+05:30  WARN 22276 --- [TranspoGov] [HikariPool-4:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-4 - Thread starvation or clock leap detected (housekeeper delta=11h33m17s102ms94µs900ns).
+2026-03-24T09:38:04.907+05:30  WARN 22276 --- [TranspoGov] [HikariPool-4:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-4 - Thread starvation or clock leap detected (housekeeper delta=6m15s109ms888µs800ns).
+2026-03-24T10:07:57.909+05:30  WARN 22276 --- [TranspoGov] [HikariPool-4:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-4 - Thread starvation or clock leap detected (housekeeper delta=22m21s541ms706µs600ns).
+2026-03-24T10:53:18.028+05:30  WARN 22276 --- [TranspoGov] [HikariPool-4:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-4 - Thread starvation or clock leap detected (housekeeper delta=9m50s113ms496µs600ns).
+2026-03-24T10:58:27.680+05:30  INFO 22276 --- [TranspoGov] [RMI TCP Connection(237)-127.0.0.1] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2026-03-24T10:58:27.690+05:30  INFO 22276 --- [TranspoGov] [RMI TCP Connection(237)-127.0.0.1] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-24T10:58:27.711+05:30  INFO 22276 --- [TranspoGov] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-03-24T10:58:27.723+05:30  INFO 22276 --- [TranspoGov] [RMI TCP Connection(237)-127.0.0.1] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-24T10:58:27.726+05:30  INFO 22276 --- [TranspoGov] [RMI TCP Connection(237)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown initiated...
+2026-03-24T10:58:27.738+05:30  INFO 22276 --- [TranspoGov] [RMI TCP Connection(237)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown completed.
+2026-03-24T15:16:12.467+05:30  INFO 15084 --- [TranspoGov] [restartedMain] c.cts.transpogov.TranspoGovApplication   : Starting TranspoGovApplication using Java 21.0.8 with PID 15084 (C:\TRAINING\Project\CTS-TranspoGovAPI\target\classes started by 2478543 in C:\TRAINING\Project\CTS-TranspoGovAPI)
+2026-03-24T15:16:12.470+05:30  INFO 15084 --- [TranspoGov] [restartedMain] c.cts.transpogov.TranspoGovApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-03-24T15:16:12.533+05:30  INFO 15084 --- [TranspoGov] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-24T15:16:12.533+05:30  INFO 15084 --- [TranspoGov] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-24T15:16:16.848+05:30  INFO 15084 --- [TranspoGov] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-24T15:16:16.924+05:30  INFO 15084 --- [TranspoGov] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 64 ms. Found 12 JPA repository interfaces.
+2026-03-24T15:16:17.490+05:30  INFO 15084 --- [TranspoGov] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 4000 (http)
+2026-03-24T15:16:17.504+05:30  INFO 15084 --- [TranspoGov] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-03-24T15:16:17.506+05:30  INFO 15084 --- [TranspoGov] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.18]
+2026-03-24T15:16:17.554+05:30  INFO 15084 --- [TranspoGov] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 5020 ms
+2026-03-24T15:16:17.772+05:30  INFO 15084 --- [TranspoGov] [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-03-24T15:16:17.832+05:30  INFO 15084 --- [TranspoGov] [restartedMain] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.4.Final
+2026-03-24T15:16:18.224+05:30  INFO 15084 --- [TranspoGov] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-24T15:16:18.269+05:30  INFO 15084 --- [TranspoGov] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-03-24T15:16:18.568+05:30  INFO 15084 --- [TranspoGov] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@50308479
+2026-03-24T15:16:18.570+05:30  INFO 15084 --- [TranspoGov] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-03-24T15:16:18.632+05:30  WARN 15084 --- [TranspoGov] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-24T15:16:18.652+05:30  INFO 15084 --- [TranspoGov] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://localhost:3306/transpo_gov]
+	Database driver: MySQL Connector/J
+	Database dialect: MySQLDialect
+	Database version: 8.0.44
+	Default catalog/schema: transpo_gov/undefined
+	Autocommit mode: undefined/unknown
+	Isolation level: REPEATABLE_READ [default REPEATABLE_READ]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-24T15:16:19.668+05:30  INFO 15084 --- [TranspoGov] [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-24T15:16:19.750+05:30  INFO 15084 --- [TranspoGov] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-24T15:16:19.821+05:30  INFO 15084 --- [TranspoGov] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-24T15:16:20.154+05:30  WARN 15084 --- [TranspoGov] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-24T15:16:20.717+05:30  INFO 15084 --- [TranspoGov] [restartedMain] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 13 endpoints beneath base path '/actuator'
+2026-03-24T15:16:20.787+05:30  INFO 15084 --- [TranspoGov] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 4000 (http) with context path '/'
+2026-03-24T15:16:20.796+05:30  INFO 15084 --- [TranspoGov] [restartedMain] c.cts.transpogov.TranspoGovApplication   : Started TranspoGovApplication in 8.877 seconds (process running for 10.007)
+2026-03-24T15:16:20.803+05:30  WARN 15084 --- [TranspoGov] [restartedMain] o.s.core.events.SpringDocAppInitializer  : SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-03-24T15:16:20.804+05:30  WARN 15084 --- [TranspoGov] [restartedMain] o.s.core.events.SpringDocAppInitializer  : SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-03-24T15:16:21.456+05:30  INFO 15084 --- [TranspoGov] [RMI TCP Connection(4)-127.0.0.1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-24T15:16:21.456+05:30  INFO 15084 --- [TranspoGov] [RMI TCP Connection(4)-127.0.0.1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-03-24T15:16:21.458+05:30  INFO 15084 --- [TranspoGov] [RMI TCP Connection(4)-127.0.0.1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-03-24T15:17:18.641+05:30  INFO 15084 --- [TranspoGov] [http-nio-4000-exec-1] c.c.t.c.NotificationController           : User got the New notifications
+2026-03-24T15:17:18.654+05:30  INFO 15084 --- [TranspoGov] [http-nio-4000-exec-1] c.c.t.service.NotificationService        : Pushing notification for userId=2 with entityId=6
+2026-03-24T15:17:24.064+05:30  INFO 15084 --- [TranspoGov] [http-nio-4000-exec-1] c.c.t.service.NotificationService        : HTML email successfully sent to apreamey2463@gmail.com
+2026-03-24T15:20:27.841+05:30  INFO 15084 --- [TranspoGov] [http-nio-4000-exec-5] c.c.t.c.NotificationController           : User got the New notifications
+2026-03-24T15:20:27.858+05:30  INFO 15084 --- [TranspoGov] [http-nio-4000-exec-5] c.c.t.service.NotificationService        : Pushing notification for userId=2 with entityId=6
+2026-03-24T15:20:33.451+05:30  INFO 15084 --- [TranspoGov] [http-nio-4000-exec-5] c.c.t.service.NotificationService        : HTML email successfully sent to apreamey2463@gmail.com
+2026-03-24T15:20:39.588+05:30  INFO 15084 --- [TranspoGov] [http-nio-4000-exec-7] c.c.t.c.NotificationController           : User got the New notifications
+2026-03-24T15:20:39.596+05:30  INFO 15084 --- [TranspoGov] [http-nio-4000-exec-7] c.c.t.service.NotificationService        : Pushing notification for userId=2 with entityId=6
+2026-03-24T15:20:44.415+05:30  INFO 15084 --- [TranspoGov] [http-nio-4000-exec-7] c.c.t.service.NotificationService        : HTML email successfully sent to apreamey2463@gmail.com
+2026-03-24T15:20:55.941+05:30  INFO 15084 --- [TranspoGov] [http-nio-4000-exec-6] c.c.t.c.NotificationController           : Fetching user notifications
+2026-03-24T15:20:56.032+05:30  INFO 15084 --- [TranspoGov] [http-nio-4000-exec-6] c.c.t.service.NotificationService        : Fetching user notifications for userId=2
+2026-03-24T15:21:29.894+05:30  INFO 15084 --- [TranspoGov] [http-nio-4000-exec-8] c.c.t.c.NotificationController           : User Read the notifications
+2026-03-24T15:21:29.935+05:30  INFO 15084 --- [TranspoGov] [http-nio-4000-exec-8] c.c.t.service.NotificationService        : Marking notification 804 as read
+2026-03-24T15:21:52.842+05:30  INFO 15084 --- [TranspoGov] [http-nio-4000-exec-9] c.c.t.controllers.ReportController       : Fetching operational dashboard
+2026-03-24T15:21:52.859+05:30  INFO 15084 --- [TranspoGov] [http-nio-4000-exec-9] c.cts.transpogov.service.ReportService   : Generating operational dashboard
+2026-03-24T15:22:19.080+05:30  INFO 15084 --- [TranspoGov] [http-nio-4000-exec-10] c.c.t.controllers.ReportController       : Running report for scope=TICKET
+2026-03-24T15:22:19.327+05:30  INFO 15084 --- [TranspoGov] [http-nio-4000-exec-10] c.cts.transpogov.service.ReportService   : Running custom report for scope=TICKET
+2026-03-24T15:22:32.693+05:30  INFO 15084 --- [TranspoGov] [http-nio-4000-exec-2] c.c.t.controllers.ReportController       : Fetching job status for jobId=1
+2026-03-24T15:22:32.704+05:30  INFO 15084 --- [TranspoGov] [http-nio-4000-exec-2] c.cts.transpogov.service.ReportService   : Fetching report jobId=1
+2026-03-24T15:32:58.928+05:30  WARN 15084 --- [TranspoGov] [HikariPool-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=8m40s467ms370µs400ns).
+2026-03-24T16:05:11.031+05:30  INFO 15084 --- [TranspoGov] [RMI TCP Connection(56)-127.0.0.1] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2026-03-24T16:05:11.037+05:30  INFO 15084 --- [TranspoGov] [RMI TCP Connection(56)-127.0.0.1] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-24T16:05:11.084+05:30  INFO 15084 --- [TranspoGov] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-03-24T16:05:11.124+05:30  INFO 15084 --- [TranspoGov] [RMI TCP Connection(56)-127.0.0.1] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-24T16:05:11.144+05:30  INFO 15084 --- [TranspoGov] [RMI TCP Connection(56)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-03-24T16:05:11.164+05:30  INFO 15084 --- [TranspoGov] [RMI TCP Connection(56)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
