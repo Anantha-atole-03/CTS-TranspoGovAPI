@@ -1,5 +1,6 @@
 package com.cts.transpogov.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,16 +10,21 @@ import org.springframework.stereotype.Service;
 import com.cts.transpogov.dtos.route.RouteResponse;
 import com.cts.transpogov.dtos.ticket.TicketCreateRequest;
 import com.cts.transpogov.dtos.ticket.TicketResponse;
+import com.cts.transpogov.enums.PaymentMethod;
+import com.cts.transpogov.enums.PaymentStatus;
 import com.cts.transpogov.enums.TicketStatus;
 import com.cts.transpogov.exceptions.CitizenNotFoundException;
 import com.cts.transpogov.exceptions.TicketNotFoundException;
 import com.cts.transpogov.exceptions.TicketStatusException;
 import com.cts.transpogov.models.Citizen;
+import com.cts.transpogov.models.Payment;
 import com.cts.transpogov.models.Ticket;
 import com.cts.transpogov.repositories.CitizenRepository;
+import com.cts.transpogov.repositories.PaymentRepository;
 import com.cts.transpogov.repositories.RouteRepository;
 import com.cts.transpogov.repositories.TicketRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
  * @RequiredArgsConstructor → Constructor-based dependency injection
  */
 @Service
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class TicketServiceImpl implements ITicketService {
@@ -38,6 +45,7 @@ public class TicketServiceImpl implements ITicketService {
 	private final TicketRepository ticketRepository;
 	private final CitizenRepository citizenRepository;
 	private final RouteRepository routeRepository;
+	private final PaymentRepository paymentRepository;
 
 	/**
 	 * Fetch all tickets booked by a specific citizen.
@@ -112,7 +120,7 @@ public class TicketServiceImpl implements ITicketService {
 			log.error("Ticket not found with id: {}", ticketId);
 			return new TicketNotFoundException("Invalid ticket");
 		});
-		TicketResponse response=modelMapper.map(ticket, TicketResponse.class);
+		TicketResponse response = modelMapper.map(ticket, TicketResponse.class);
 		response.setCitizenId(ticket.getCitizen().getCitizenId());
 		response.setRoute(modelMapper.map(ticket.getRoute(), RouteResponse.class));
 
@@ -138,8 +146,9 @@ public class TicketServiceImpl implements ITicketService {
 		log.warn(ticket.toString());
 		ticket.setCitizen(citizen);
 		ticket.setStatus(TicketStatus.PENDING_PAYMENT);
-		
-		ticket.setRoute(routeRepository.findById(ticketCreateRequest.getRouteId()).orElseThrow(()->new RuntimeException("Route not found")));
+
+		ticket.setRoute(routeRepository.findById(ticketCreateRequest.getRouteId())
+				.orElseThrow(() -> new RuntimeException("Route not found")));
 		Ticket savedTicket = ticketRepository.save(ticket);
 
 		log.info("Ticket booked successfully. TicketId: {}", savedTicket.getTicketId());
@@ -179,5 +188,33 @@ public class TicketServiceImpl implements ITicketService {
 		log.info("Ticket {} cancelled successfully", ticketId);
 
 		return "Ticket cancelled successfully";
+	}
+
+	@Override
+	public String makePayment(Long ticketId, String paymentMethod) {
+
+		log.info("Initiating payment for TicketId: {}", ticketId);
+
+		Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> {
+			log.error("Ticket not found with id: {}", ticketId);
+			return new TicketNotFoundException("Invalid ticket id");
+		});
+
+		if (!ticket.getStatus().equals(TicketStatus.PENDING_PAYMENT)) {
+			log.warn("Payment not allowed for TicketId {} with status {}", ticketId, ticket.getStatus());
+			throw new TicketStatusException("Payment not allowed for ticket status: " + ticket.getStatus());
+		}
+
+		Payment payment = Payment.builder().ticket(ticket).method(PaymentMethod.valueOf(paymentMethod.toUpperCase()))
+				.date(LocalDateTime.now()).status(PaymentStatus.SUCCESS).build();
+
+		paymentRepository.save(payment);
+
+		ticket.setStatus(TicketStatus.CONFIRMED);
+		ticketRepository.save(ticket);
+
+		log.info("Payment successful for TicketId: {}", ticketId);
+
+		return "Payment successful. Ticket confirmed.";
 	}
 }

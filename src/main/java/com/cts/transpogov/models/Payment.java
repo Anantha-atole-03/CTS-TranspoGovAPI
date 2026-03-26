@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.cts.transpogov.enums.PaymentMethod;
 import com.cts.transpogov.enums.PaymentStatus;
 
 import jakarta.persistence.Column;
@@ -23,21 +24,28 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity @Table(name = "payments")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Entity
+@Table(name = "payments")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Payment {
-  @Id @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "payment_id", updatable = false, nullable = false)
-  private Long paymentId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "payment_id", updatable = false, nullable = false)
+	private Long paymentId;
 
-  @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "ticket_id", nullable = false)
-  private Ticket ticket;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ticket_id", nullable = false)
+	private Ticket ticket;
 
-  private String method; 
-  private LocalDateTime date;
+	private PaymentMethod method;
+	private LocalDateTime date;
 
-  @Enumerated(EnumType.STRING)
-  private PaymentStatus status;
-  @CreationTimestamp
-  private LocalDateTime createdAt;
+	@Enumerated(EnumType.STRING)
+	private PaymentStatus status;
+	@CreationTimestamp
+	private LocalDateTime createdAt;
 }
