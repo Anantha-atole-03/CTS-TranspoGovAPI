@@ -1,7 +1,8 @@
 package com.cts.transpogov.models;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import com.cts.transpogov.enums.TicketStatus;
 
@@ -21,23 +22,38 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
-@Entity @Table(name = "tickets")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Entity
+@Table(name = "tickets")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
 public class Ticket {
-  @Id @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "ticket_id", updatable = false, nullable = false)
-  private Long ticketId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "ticket_id", updatable = false, nullable = false)
+	private Long ticketId;
 
-  @Column(name = "citizen_id")
-  private Long citizenId;
+ 
 
-  @Column(name = "route_id")
-  private Long routeId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "citizen_id", nullable = false)
+	private Citizen citizen;
 
-  private LocalDateTime date;
-  private Double fareAmount;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "route_id", nullable = false)
+	private Route route;
 
-  @Enumerated(EnumType.STRING)
-  private TicketStatus status;
+
+	private LocalDateTime date;
+	private Double fareAmount;
+
+	@Enumerated(EnumType.STRING)
+	private TicketStatus status;
+	@CreationTimestamp
+	private LocalDateTime createdAt;
 }
