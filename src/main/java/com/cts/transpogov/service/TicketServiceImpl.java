@@ -217,4 +217,9 @@ public class TicketServiceImpl implements ITicketService {
 
 		return "Payment successful. Ticket confirmed.";
 	}
+
+	@Override
+	public long countTickets() {
+		return ticketRepository.count();
+	}
 }

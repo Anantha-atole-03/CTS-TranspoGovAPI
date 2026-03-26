@@ -6,9 +6,7 @@ public class ApiResponse<T> {
 
 	private String message;
 	private LocalDateTime time;
-
 	private int statusCode; // renamed from stateCode
-
 	private T data;
 
 	public ApiResponse() {
@@ -28,45 +26,7 @@ public class ApiResponse<T> {
 		this.time = LocalDateTime.now();
 	}
 
-	/*
-	 * --------------------------------------------------------- Static factory
-	 * helpers (added to support your controller)
-	 * ---------------------------------------------------------
-	 */
-
-	/** 200 OK with data */
-	public static <T> ApiResponse<T> ok(T data) {
-		return new ApiResponse<>("OK", 200, data);
-	}
-
-	/** 200 OK with custom message */
-	public static <T> ApiResponse<T> ok(String message, T data) {
-
-		return new ApiResponse<>(message, 200, data);
-	}
-
-	/** 201 Created with data */
-	public static <T> ApiResponse<T> created(T data) {
-		return new ApiResponse<>("CREATED", 201, data);
-
-	}
-
-	/** 201 Created with custom message */
-	public static <T> ApiResponse<T> created(String message, T data) {
-
-		return new ApiResponse<>(message, 201, data);
-	}
-
-	/** Generic error helper (not required by your controller, but handy) */
-	public static <T> ApiResponse<T> error(String message, int statusCode) {
-
-		return new ApiResponse<>(message, statusCode, null);
-	}
-
-	/*
-	 * ------------------- Getters & Setters -------------------
-	 */
-
+	// Getters & Setters
 	public String getMessage() {
 		return message;
 	}

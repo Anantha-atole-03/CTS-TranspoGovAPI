@@ -1,5 +1,6 @@
 package com.cts.transpogov.service;
 
+
 import java.util.List;
 
 import com.cts.transpogov.dtos.program.ProgramCreateRequest;
@@ -24,4 +25,5 @@ public interface ITransportProgramService {
 
 	ProgramResponse updateProgram(Long programId, ProgramUpdateRequest updateRequest);
 
+	double calculateEfficiency();
 }

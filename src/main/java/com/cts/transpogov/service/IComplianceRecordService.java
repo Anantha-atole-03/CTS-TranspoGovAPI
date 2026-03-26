@@ -19,7 +19,9 @@ public interface IComplianceRecordService {
 	String delete(Long id);
 
 	ComplianceResponse findById(Long id);
+	int getComplianceAlerts();
 
 //	Map<ComplianceResultStatus, Long> getStatusWiseCount();
 
 }
+
