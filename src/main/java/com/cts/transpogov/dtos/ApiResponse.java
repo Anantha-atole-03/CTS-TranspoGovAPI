@@ -49,7 +49,6 @@ public class ApiResponse<T> {
 
 	/** 201 Created with data */
 	public static <T> ApiResponse<T> created(T data) {
-//        ApiResponse<T> res = new ApiResponse<>("CREATED", 201, data);
 		return new ApiResponse<>("CREATED", 201, data);
 
 	}

@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.cts.transpogov.dtos.compliance.ComplianceCreateRequest;
 import com.cts.transpogov.dtos.compliance.ComplianceResponse;
-import com.cts.transpogov.models.ComplianceRecord;
 
 public interface IComplianceRecordService {
 	List<ComplianceResponse> findAll();
@@ -20,5 +19,7 @@ public interface IComplianceRecordService {
 	String delete(Long id);
 
 	ComplianceResponse findById(Long id);
+
+//	Map<ComplianceResultStatus, Long> getStatusWiseCount();
 
 }

@@ -11,5 +11,5 @@ import com.cts.transpogov.models.ComplianceRecord;
 public interface ComplianceRecordRepository extends JpaRepository<ComplianceRecord, Long> {
 
 	List<ComplianceRecord> findByEntityId(Long entityId);
-    // Basic CRUD is enough for now
+
 }

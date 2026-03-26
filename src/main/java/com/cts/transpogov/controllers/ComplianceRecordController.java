@@ -4,7 +4,14 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.cts.transpogov.dtos.ApiResponse;
 import com.cts.transpogov.dtos.compliance.ComplianceCreateRequest;
@@ -21,7 +28,7 @@ public class ComplianceRecordController {
 	private final ComplianceRecordService service;
 
 	@GetMapping("/")
-	public ResponseEntity<?> getAll() {
+	public ResponseEntity<ApiResponse<List<ComplianceResponse>>> getAll() {
 		List<ComplianceResponse> data = service.findAll();
 		return ResponseEntity
 				.ok(new ApiResponse<List<ComplianceResponse>>("Records fetched!", HttpStatus.OK.value(), data));
@@ -40,8 +47,6 @@ public class ComplianceRecordController {
 				.body(new ApiResponse<>(message, HttpStatus.CREATED.value(), null));
 	}
 
-
-
 	@PutMapping("/update/{id}")
 	public ResponseEntity<ApiResponse<ComplianceResponse>> update(@PathVariable Long id,
 			@RequestBody ComplianceCreateRequest body) {
@@ -49,26 +54,30 @@ public class ComplianceRecordController {
 		return ResponseEntity.ok(new ApiResponse<>("Record updated successfully", HttpStatus.OK.value(), updated));
 	}
 
-	// DELETE /compliances/delete/{id}
+	/*
+	 * DELETE /compliances/delete/id
+	 */
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<ApiResponse<String>> delete(@PathVariable Long id) {
 		String message = service.delete(id);
 		return ResponseEntity.ok(new ApiResponse<>(message, HttpStatus.OK.value(), null));
 	}
 
-	// GET /compliances/summary
-	@GetMapping("/summary")
-	public ResponseEntity<ApiResponse<Long>> getCount() {
-		Long count = service.getCount();
-		return ResponseEntity.ok(new ApiResponse<>("Count fetched!", HttpStatus.OK.value(), count));
-	}
-
-	// GET /compliances/getByEntity/{entityId}
+	/*
+	 * GET /compliances/getByEntity/id
+	 * 
+	 */
 	@GetMapping("/getByEntity/{entityId}")
 	public ResponseEntity<ApiResponse<List<ComplianceResponse>>> findByEntityId(
 			@PathVariable("entityId") Long entityId) {
 		List<ComplianceResponse> list = service.findByEntityId(entityId);
 		return ResponseEntity.ok(new ApiResponse<>("Records fetched by entityId!", HttpStatus.OK.value(), list));
 	}
+//
+//	@GetMapping("/summary")
+//	public ResponseEntity<ApiResponse<?>> getCount() {
+//		return ResponseEntity
+//				.ok(new ApiResponse<>("Count fetched!", HttpStatus.OK.value(), service.getStatusWiseCount()));
+//	}
 
 }
