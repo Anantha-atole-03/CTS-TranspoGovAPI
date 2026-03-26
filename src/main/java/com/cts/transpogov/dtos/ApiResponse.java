@@ -2,15 +2,13 @@ package com.cts.transpogov.dtos;
 
 import java.time.LocalDateTime;
 
-/**
- * ApiResponse<T> - Preserves your existing fields and constructors. - Adds
- * static factory methods ok(...) and created(...) to match controller usage.
- */
 public class ApiResponse<T> {
 
 	private String message;
 	private LocalDateTime time;
+
 	private int statusCode; // renamed from stateCode
+
 	private T data;
 
 	public ApiResponse() {
@@ -68,6 +66,7 @@ public class ApiResponse<T> {
 	/*
 	 * ------------------- Getters & Setters -------------------
 	 */
+
 	public String getMessage() {
 		return message;
 	}
