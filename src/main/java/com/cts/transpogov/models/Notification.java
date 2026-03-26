@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.cts.transpogov.enums.NotificationCategory;
+import com.cts.transpogov.enums.NotificationScope;
 import com.cts.transpogov.enums.NotificationStatus;
 
 import jakarta.persistence.Column;
@@ -26,34 +27,46 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
-@Entity @Table(name = "notifications")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Entity
+@Table(name = "notifications")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Notification {
-  @Id @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "notification_id", updatable = false, nullable = false)
-  private Long notificationId;
- 
-  @NotNull(message = "Recipient user is required")
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user; 
-  
-  private String entityId;
-  
-  @NotBlank(message = "Notification message cannot be empty")
-  @Column(columnDefinition = "text", nullable = false)
-  private String message;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "notification_id", updatable = false, nullable = false)
+	private Long notificationId;
 
-  @NotNull(message = "Category is reuired")
-  @Enumerated(EnumType.STRING)
-  private NotificationCategory category;
 
-  @NotNull(message = " Status is required")
-  @Enumerated(EnumType.STRING)
-  private NotificationStatus status;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", nullable = true)
+	private User user;
 
-  @CreationTimestamp
-  @Column(name = "created_date", updatable = false)
-  private LocalDateTime createdDate;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "citizen_id", nullable = true)
+	private Citizen citizen;
+
+	private Long entityId;
+
+	@NotBlank(message = "Notification message cannot be empty")
+	@Column(columnDefinition = "text", nullable = false)
+	private String message;
+
+	@NotNull(message = "Category is reuired")
+	@Enumerated(EnumType.STRING)
+	private NotificationCategory category;
+
+	@Enumerated(EnumType.STRING)
+	private NotificationScope scope;
+
+	@NotNull(message = " Status is required")
+	@Enumerated(EnumType.STRING)
+	private NotificationStatus status;
+
+	@CreationTimestamp
+	@Column(name = "created_date", updatable = false)
+	private LocalDateTime createdDate;
 }

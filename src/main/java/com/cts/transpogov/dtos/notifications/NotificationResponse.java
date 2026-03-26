@@ -7,7 +7,6 @@ import com.cts.transpogov.enums.NotificationStatus;
 public class NotificationResponse {
     private Long notificationId;
     private String message;
-    private String entityId;
     private NotificationCategory category;
     private NotificationStatus status;
     private LocalDateTime createdDate;
@@ -19,9 +18,7 @@ public class NotificationResponse {
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
 
-    public String getEntityId() { return entityId; }
-    public void setEntityId(String entityId) { this.entityId = entityId; }
-
+   
     public NotificationCategory getCategory() { return category; }
     public void setCategory(NotificationCategory category) { this.category = category; }
 

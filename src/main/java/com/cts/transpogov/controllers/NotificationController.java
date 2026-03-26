@@ -36,10 +36,17 @@ public class NotificationController {
 	 * Return:ResponseEntity<ApiResponse<List<NotificationResponse>>> type
 	 */
 	// GET /notifications?userId=123
-	@GetMapping
+	@GetMapping("/user/")
 	public ResponseEntity<ApiResponse<List<NotificationResponse>>> getUserNotifications(@RequestParam Long userId) {
 		log.info("Fetching user notifications");
 		List<NotificationResponse> notifications = notificationService.getUserNotifications(userId);
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new ApiResponse<>("Notification fetched", HttpStatus.OK.value(), notifications));
+	}
+	@GetMapping("/citizen/")
+	public ResponseEntity<ApiResponse<List<NotificationResponse>>> getCitizenNotifications(@RequestParam Long userId) {
+		log.info("Fetching user notifications");
+		List<NotificationResponse> notifications = notificationService.getCitizenNotifications(userId);
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new ApiResponse<>("Notification fetched", HttpStatus.OK.value(), notifications));
 	}
@@ -72,5 +79,19 @@ public class NotificationController {
 		NotificationResponse response = notificationService.pushNotification(request);
 		return ResponseEntity.status(HttpStatus.CREATED)
 				.body(new ApiResponse<>("Notification pushed", HttpStatus.CREATED.value(), response));
+	}
+	
+	@PostMapping("/systemnotification/testall")
+	public ResponseEntity<ApiResponse<String>> testAllSystemNotifications() {
+
+	    log.info("Testing all system generated notifications");
+
+	  notificationService.testAll();
+
+	    return ResponseEntity.ok(
+	            new ApiResponse<>(
+	                    "All System Notifications Sent Successfully",
+	                    HttpStatus.OK.value(),
+	                    "Success"));
 	}
 }
