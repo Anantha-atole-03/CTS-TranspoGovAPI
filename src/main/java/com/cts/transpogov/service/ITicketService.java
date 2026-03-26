@@ -7,8 +7,14 @@ import com.cts.transpogov.dtos.ticket.TicketResponse;
 
 public interface ITicketService {
 	List<TicketResponse> getMyAllTickets(Long citizenId);
+
 	String checkTicket(Long ticketId);
+
 	TicketResponse getTicket(Long ticketId);
+
 	TicketResponse bookTicket(TicketCreateRequest ticketCreateRequest);
+
 	String cancelTicket(Long ticketId);
+
+	String makePayment(Long ticketId, String paymentMethod);
 }

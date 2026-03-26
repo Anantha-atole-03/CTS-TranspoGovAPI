@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cts.transpogov.dtos.ApiResponse;
+import com.cts.transpogov.dtos.program.ProgramUtilization;
 import com.cts.transpogov.dtos.program.ResourceCreateRequest;
 import com.cts.transpogov.dtos.program.ResourceResponse;
 import com.cts.transpogov.enums.ResourceStatus;
@@ -33,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 @Slf4j
 public class ResourceController {
-
+	@Autowired
 	private final IResourceService resourceService;
 
 	private static final Logger log = LoggerFactory.getLogger(ResourceController.class);
@@ -123,6 +125,15 @@ public class ResourceController {
 		return ResponseEntity
 				.ok(new ApiResponse<>(resourceService.deleteResouce(resourceId), HttpStatus.OK.value(), null));
 
+	}
+
+	// 29. GET /resources/{programId}/utilizations → Log resource usage
+	@GetMapping("/{programId}/utilizations")
+	public ResponseEntity<ApiResponse<ProgramUtilization>> getUtilizedResourcesForProgram(
+			@PathVariable Long programId) {
+		log.info("All resources feteched!");
+		return ResponseEntity.ok(new ApiResponse<>("Resource Log fetched successfully", HttpStatus.OK.value(),
+				resourceService.getResourceUtilization(programId)));
 	}
 
 }

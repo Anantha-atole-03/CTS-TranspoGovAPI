@@ -19,4 +19,7 @@ public class ResourceCreateRequest {
 	@Positive(message = "Quantity should be positive number")
 	private int quantity;
 	private ResourceStatus status;
+	@NotNull(message = "Budget should be provided")
+	@Positive(message = "Budget should be positive number")
+	private double budget;
 }
