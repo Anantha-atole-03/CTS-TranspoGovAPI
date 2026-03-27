@@ -41,6 +41,7 @@ public class Payment {
 	@JoinColumn(name = "ticket_id", nullable = false)
 	private Ticket ticket;
 
+	@Enumerated(EnumType.STRING)
 	private PaymentMethod method;
 	private LocalDateTime date;
 
