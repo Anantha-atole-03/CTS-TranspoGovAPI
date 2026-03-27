@@ -35,11 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 @Slf4j
 public class ResourceController {
-	@Autowired
 	private final IResourceService resourceService;
-
-	private static final Logger log = LoggerFactory.getLogger(ResourceController.class);
-
 	/*
 	 * Method: GET Description: It fetch all resources return:
 	 * ResponseEntity<ApiResponse> type
