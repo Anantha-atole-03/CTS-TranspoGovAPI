@@ -62,13 +62,6 @@ public class AuditController {
 		AuditResponse dto = auditService.findById(id);
 		return ResponseEntity.ok(new ApiResponse<>("Record fetched!", HttpStatus.OK.value(), dto));
 	}
-//
-//	/* ========= POST /audits/{id}/report — Generate report ========= */
-//	@GetMapping("/{id}/report")
-//	public ResponseEntity<ApiResponse<GenerateReportResponse>> generateReport(@PathVariable Long id) {
-//		GenerateReportResponse dto = auditService.generateReport(id);
-//		return ResponseEntity.ok(new ApiResponse<>("Report generated!", HttpStatus.OK.value(), dto));
-//	}
 
 	/* ========= POST /audits/{id}/close — Close audit ========= */
 	@GetMapping("/{id}/close")
@@ -83,5 +76,12 @@ public class AuditController {
 		return ResponseEntity
 				.ok(new ApiResponse<>("Count fetched!", HttpStatus.OK.value(), auditService.getStatusWiseCount()));
 	}
+
+//	/* ========= POST /audits/{id}/report — Generate report ========= */
+//	@GetMapping("/{id}/report")
+//	public ResponseEntity<ApiResponse<GenerateReportResponse>> generateReport(@PathVariable Long id) {
+//		GenerateReportResponse dto = auditService.generateReport(id);
+//		return ResponseEntity.ok(new ApiResponse<>("Report generated!", HttpStatus.OK.value(), dto));
+//	}
 
 }

@@ -119,9 +119,6 @@ public class AuditService implements IAuditService {
 				.orElseThrow(() -> new AuditNotFoundException("Audit not found"));
 		String url = "https://reports.transpogov.local/audits/" + audit.getId() + "/report-"
 				+ System.currentTimeMillis() + ".pdf";
-//
-//		audit.setReportUrl(url);
-//		auditRepository.save(audit);
 
 		GenerateReportResponse resp = new GenerateReportResponse();
 		resp.setAuditId(audit.getId());

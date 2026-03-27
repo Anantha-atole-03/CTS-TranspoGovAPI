@@ -1,0 +1,111 @@
+2026-03-27T09:01:52.023+05:30  INFO 23232 --- [TranspoGov] [restartedMain] c.cts.transpogov.TranspoGovApplication   : Starting TranspoGovApplication using Java 21 with PID 23232 (C:\Users\2478534\OneDrive - Cognizant\Desktop\Training\Project\CTS-TranspoGovAPI\target\classes started by 2478534 in C:\Users\2478534\OneDrive - Cognizant\Desktop\Training\Project\CTS-TranspoGovAPI)
+2026-03-27T09:01:52.036+05:30  INFO 23232 --- [TranspoGov] [restartedMain] c.cts.transpogov.TranspoGovApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-03-27T09:01:52.140+05:30  INFO 23232 --- [TranspoGov] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-27T09:01:52.141+05:30  INFO 23232 --- [TranspoGov] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-27T09:01:54.336+05:30  INFO 23232 --- [TranspoGov] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-27T09:01:54.531+05:30  INFO 23232 --- [TranspoGov] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 174 ms. Found 10 JPA repository interfaces.
+2026-03-27T09:01:55.623+05:30  INFO 23232 --- [TranspoGov] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 4000 (http)
+2026-03-27T09:01:55.649+05:30  INFO 23232 --- [TranspoGov] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-03-27T09:01:55.651+05:30  INFO 23232 --- [TranspoGov] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.18]
+2026-03-27T09:01:55.804+05:30  INFO 23232 --- [TranspoGov] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 3662 ms
+2026-03-27T09:01:56.334+05:30  INFO 23232 --- [TranspoGov] [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-03-27T09:01:56.550+05:30  INFO 23232 --- [TranspoGov] [restartedMain] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.4.Final
+2026-03-27T09:01:57.708+05:30  INFO 23232 --- [TranspoGov] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-27T09:01:57.849+05:30  INFO 23232 --- [TranspoGov] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-03-27T09:01:59.060+05:30  INFO 23232 --- [TranspoGov] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@55d4f29b
+2026-03-27T09:01:59.067+05:30  INFO 23232 --- [TranspoGov] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-03-27T09:01:59.194+05:30  WARN 23232 --- [TranspoGov] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-27T09:01:59.257+05:30  INFO 23232 --- [TranspoGov] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://localhost:3306/transpo_gov]
+	Database driver: MySQL Connector/J
+	Database dialect: MySQLDialect
+	Database version: 8.0.44
+	Default catalog/schema: transpo_gov/undefined
+	Autocommit mode: undefined/unknown
+	Isolation level: REPEATABLE_READ [default REPEATABLE_READ]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-27T09:02:01.888+05:30  INFO 23232 --- [TranspoGov] [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-27T09:02:02.738+05:30  WARN 23232 --- [TranspoGov] [restartedMain] o.h.t.s.i.ExceptionHandlerLoggedImpl     : GenerationTarget encountered exception accepting command : Error executing DDL "alter table audit add constraint FKqxxwibj2lwraxrgl59uhugx7p foreign key (officer_id) references users (user_id)" via JDBC [Cannot add or update a child row: a foreign key constraint fails (`transpo_gov`.`#sql-1edc_8`, CONSTRAINT `FKqxxwibj2lwraxrgl59uhugx7p` FOREIGN KEY (`officer_id`) REFERENCES `users` (`user_id`))]
+
+org.hibernate.tool.schema.spi.CommandAcceptanceException: Error executing DDL "alter table audit add constraint FKqxxwibj2lwraxrgl59uhugx7p foreign key (officer_id) references users (user_id)" via JDBC [Cannot add or update a child row: a foreign key constraint fails (`transpo_gov`.`#sql-1edc_8`, CONSTRAINT `FKqxxwibj2lwraxrgl59uhugx7p` FOREIGN KEY (`officer_id`) REFERENCES `users` (`user_id`))]
+	at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:81) ~[hibernate-core-7.2.4.Final.jar:7.2.4.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlString(AbstractSchemaMigrator.java:566) ~[hibernate-core-7.2.4.Final.jar:7.2.4.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlStrings(AbstractSchemaMigrator.java:506) ~[hibernate-core-7.2.4.Final.jar:7.2.4.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applyForeignKeys(AbstractSchemaMigrator.java:438) ~[hibernate-core-7.2.4.Final.jar:7.2.4.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.performMigration(AbstractSchemaMigrator.java:256) ~[hibernate-core-7.2.4.Final.jar:7.2.4.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.doMigration(AbstractSchemaMigrator.java:96) ~[hibernate-core-7.2.4.Final.jar:7.2.4.Final]
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.performDatabaseAction(SchemaManagementToolCoordinator.java:269) ~[hibernate-core-7.2.4.Final.jar:7.2.4.Final]
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.lambda$process$1(SchemaManagementToolCoordinator.java:101) ~[hibernate-core-7.2.4.Final.jar:7.2.4.Final]
+	at java.base/java.util.HashMap.forEach(HashMap.java:1429) ~[na:na]
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.process(SchemaManagementToolCoordinator.java:100) ~[hibernate-core-7.2.4.Final.jar:7.2.4.Final]
+	at org.hibernate.boot.internal.SessionFactoryObserverForSchemaExport.sessionFactoryCreated(SessionFactoryObserverForSchemaExport.java:35) ~[hibernate-core-7.2.4.Final.jar:7.2.4.Final]
+	at org.hibernate.internal.SessionFactoryObserverChain.sessionFactoryCreated(SessionFactoryObserverChain.java:33) ~[hibernate-core-7.2.4.Final.jar:7.2.4.Final]
+	at org.hibernate.internal.SessionFactoryImpl.<init>(SessionFactoryImpl.java:323) ~[hibernate-core-7.2.4.Final.jar:7.2.4.Final]
+	at org.hibernate.internal.SessionFactoryRegistry.instantiateSessionFactory(SessionFactoryRegistry.java:64) ~[hibernate-core-7.2.4.Final.jar:7.2.4.Final]
+	at org.hibernate.boot.internal.SessionFactoryBuilderImpl.build(SessionFactoryBuilderImpl.java:437) ~[hibernate-core-7.2.4.Final.jar:7.2.4.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1456) ~[hibernate-core-7.2.4.Final.jar:7.2.4.Final]
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:93) ~[spring-orm-7.0.5.jar:7.0.5]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:443) ~[spring-orm-7.0.5.jar:7.0.5]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:436) ~[spring-orm-7.0.5.jar:7.0.5]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:411) ~[spring-orm-7.0.5.jar:7.0.5]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:419) ~[spring-orm-7.0.5.jar:7.0.5]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1864) ~[spring-beans-7.0.5.jar:7.0.5]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1813) ~[spring-beans-7.0.5.jar:7.0.5]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:603) ~[spring-beans-7.0.5.jar:7.0.5]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525) ~[spring-beans-7.0.5.jar:7.0.5]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333) ~[spring-beans-7.0.5.jar:7.0.5]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371) ~[spring-beans-7.0.5.jar:7.0.5]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331) ~[spring-beans-7.0.5.jar:7.0.5]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:201) ~[spring-beans-7.0.5.jar:7.0.5]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:977) ~[spring-context-7.0.5.jar:7.0.5]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:621) ~[spring-context-7.0.5.jar:7.0.5]
+	at org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143) ~[spring-boot-web-server-4.0.3.jar:4.0.3]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:756) ~[spring-boot-4.0.3.jar:4.0.3]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:445) ~[spring-boot-4.0.3.jar:4.0.3]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:321) ~[spring-boot-4.0.3.jar:4.0.3]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1365) ~[spring-boot-4.0.3.jar:4.0.3]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354) ~[spring-boot-4.0.3.jar:4.0.3]
+	at com.cts.transpogov.TranspoGovApplication.main(TranspoGovApplication.java:14) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:52) ~[spring-boot-devtools-4.0.3.jar:4.0.3]
+Caused by: java.sql.SQLIntegrityConstraintViolationException: Cannot add or update a child row: a foreign key constraint fails (`transpo_gov`.`#sql-1edc_8`, CONSTRAINT `FKqxxwibj2lwraxrgl59uhugx7p` FOREIGN KEY (`officer_id`) REFERENCES `users` (`user_id`))
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:109) ~[mysql-connector-j-9.6.0.jar:9.6.0]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:114) ~[mysql-connector-j-9.6.0.jar:9.6.0]
+	at com.mysql.cj.jdbc.StatementImpl.executeInternal(StatementImpl.java:839) ~[mysql-connector-j-9.6.0.jar:9.6.0]
+	at com.mysql.cj.jdbc.StatementImpl.execute(StatementImpl.java:687) ~[mysql-connector-j-9.6.0.jar:9.6.0]
+	at com.zaxxer.hikari.pool.ProxyStatement.execute(ProxyStatement.java:95) ~[HikariCP-7.0.2.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyStatement.execute(HikariProxyStatement.java) ~[HikariCP-7.0.2.jar:na]
+	at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:76) ~[hibernate-core-7.2.4.Final.jar:7.2.4.Final]
+	... 40 common frames omitted
+
+2026-03-27T09:02:02.746+05:30  INFO 23232 --- [TranspoGov] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-27T09:02:02.884+05:30  INFO 23232 --- [TranspoGov] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-27T09:02:05.001+05:30  WARN 23232 --- [TranspoGov] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-27T09:02:06.080+05:30  INFO 23232 --- [TranspoGov] [restartedMain] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 13 endpoints beneath base path '/actuator'
+2026-03-27T09:02:06.201+05:30  INFO 23232 --- [TranspoGov] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 4000 (http) with context path '/'
+2026-03-27T09:02:06.214+05:30  INFO 23232 --- [TranspoGov] [restartedMain] c.cts.transpogov.TranspoGovApplication   : Started TranspoGovApplication in 14.909 seconds (process running for 16.589)
+2026-03-27T09:02:06.223+05:30  WARN 23232 --- [TranspoGov] [restartedMain] o.s.core.events.SpringDocAppInitializer  : SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-03-27T09:02:06.224+05:30  WARN 23232 --- [TranspoGov] [restartedMain] o.s.core.events.SpringDocAppInitializer  : SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-03-27T09:02:07.366+05:30  INFO 23232 --- [TranspoGov] [RMI TCP Connection(4)-127.0.0.1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-27T09:02:07.367+05:30  INFO 23232 --- [TranspoGov] [RMI TCP Connection(4)-127.0.0.1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-03-27T09:02:07.374+05:30  INFO 23232 --- [TranspoGov] [RMI TCP Connection(4)-127.0.0.1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 6 ms
+2026-03-27T09:07:04.184+05:30  INFO 23232 --- [TranspoGov] [http-nio-4000-exec-1] c.cts.transpogov.service.AuditService    : Creating audit for officerId: 106
+2026-03-27T09:07:04.398+05:30 ERROR 23232 --- [TranspoGov] [http-nio-4000-exec-1] c.c.t.exceptions.GlobalExceptionHandler  : class java.lang.RuntimeException : Compliance officer not found with id:106
+2026-03-27T09:07:04.543+05:30  WARN 23232 --- [TranspoGov] [http-nio-4000-exec-1] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.RuntimeException: Compliance officer not found with id:106]
+2026-03-27T09:08:42.295+05:30  INFO 23232 --- [TranspoGov] [http-nio-4000-exec-4] c.cts.transpogov.service.AuditService    : Creating audit for officerId: null
+2026-03-27T09:08:42.313+05:30 ERROR 23232 --- [TranspoGov] [http-nio-4000-exec-4] c.c.t.exceptions.GlobalExceptionHandler  : class org.springframework.dao.InvalidDataAccessApiUsageException : The given id must not be null
+2026-03-27T09:08:42.316+05:30  WARN 23232 --- [TranspoGov] [http-nio-4000-exec-4] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.dao.InvalidDataAccessApiUsageException: The given id must not be null]
+2026-03-27T09:09:00.655+05:30  INFO 23232 --- [TranspoGov] [http-nio-4000-exec-6] c.cts.transpogov.service.AuditService    : Creating audit for officerId: null
+2026-03-27T09:09:00.672+05:30 ERROR 23232 --- [TranspoGov] [http-nio-4000-exec-6] c.c.t.exceptions.GlobalExceptionHandler  : class org.springframework.dao.InvalidDataAccessApiUsageException : The given id must not be null
+2026-03-27T09:09:00.680+05:30  WARN 23232 --- [TranspoGov] [http-nio-4000-exec-6] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.dao.InvalidDataAccessApiUsageException: The given id must not be null]
+2026-03-27T09:09:26.056+05:30  INFO 23232 --- [TranspoGov] [http-nio-4000-exec-9] c.cts.transpogov.service.AuditService    : Creating audit for officerId: 103
+2026-03-27T09:09:26.078+05:30 ERROR 23232 --- [TranspoGov] [http-nio-4000-exec-9] c.c.t.exceptions.GlobalExceptionHandler  : class java.lang.RuntimeException : Compliance officer not found with id:103
+2026-03-27T09:09:26.078+05:30  WARN 23232 --- [TranspoGov] [http-nio-4000-exec-9] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.RuntimeException: Compliance officer not found with id:103]
+2026-03-27T09:10:25.884+05:30  INFO 23232 --- [TranspoGov] [http-nio-4000-exec-3] c.cts.transpogov.service.AuditService    : Creating audit for officerId: 1
+2026-03-27T09:10:26.412+05:30  INFO 23232 --- [TranspoGov] [http-nio-4000-exec-3] c.cts.transpogov.service.AuditService    : Audit created with id: 13
+2026-03-27T09:10:57.960+05:30  INFO 23232 --- [TranspoGov] [http-nio-4000-exec-2] c.cts.transpogov.service.AuditService    : Creating audit for officerId: 1
+2026-03-27T09:10:58.003+05:30  INFO 23232 --- [TranspoGov] [http-nio-4000-exec-2] c.cts.transpogov.service.AuditService    : Audit created with id: 14
