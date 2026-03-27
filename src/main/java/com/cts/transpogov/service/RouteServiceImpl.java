@@ -1,76 +1,93 @@
 package com.cts.transpogov.service;
 
+import java.util.List;
+
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cts.transpogov.dtos.route.RouteCreateRequest;
+import com.cts.transpogov.dtos.route.RouteResponse;
+import com.cts.transpogov.dtos.route.RouteUpdateRequest;
+import com.cts.transpogov.enums.RouteStatus;
 import com.cts.transpogov.exceptions.RouteNotFoundException;
 import com.cts.transpogov.models.Route;
 import com.cts.transpogov.repositories.RouteRepository;
-import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 
 // Service implementation for managing Routes.
 // Handles business logic and interacts with the repository layer.
 // Loggers write messages when CRUD operations perform (like adding, updating, or deleting a route).
 
-@Service // tells Spring this is a service layer bean.
-public class RouteServiceImpl implements RouteService {
+@Service
+@RequiredArgsConstructor
+public class RouteServiceImpl implements IRouteService {
 
-    private static final Logger logger = LoggerFactory.getLogger(RouteServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(RouteServiceImpl.class);
 
-    @Autowired
-    private RouteRepository routeRepository;
+	private final ModelMapper modelMapper;
+	private final RouteRepository routeRepository;
 
-    @Override // Method: Add Route
-    public Route addRoute(Route route) {
-        logger.info("Adding new route: {}", route.getTitle());
-        return routeRepository.save(route);
-    }
+	@Override // Add Route
+	public RouteResponse addRoute(RouteCreateRequest route) {
+		logger.info("Adding new route: {}", route.getTitle());
+		Route savedRoute = routeRepository.save(modelMapper.map(route, Route.class));
+		return modelMapper.map(savedRoute, RouteResponse.class);
+	}
 
-    @Override // Method: Update Route
-    public Route updateRoute(Long id, Route route) {
-        logger.info("Updating route with id: {}", id);
-        Route existing = routeRepository.findById(id)
-                .orElseThrow(() -> new RouteNotFoundException("Route not found with id: " + id));
+	@Override // Update Route
+	public RouteResponse updateRoute(Long id, RouteUpdateRequest route) {
+		logger.info("Updating route with id: {}", id);
+		Route existing = routeRepository.findById(id)
+				.orElseThrow(() -> new RouteNotFoundException("Route not found with id: " + id));
 
-        existing.setTitle(route.getTitle());
-        existing.setType(route.getType());
-        existing.setStartPoint(route.getStartPoint());
-        existing.setEndPoint(route.getEndPoint());
-        existing.setStatus(route.getStatus());
+		// Apply updates from DTO
+		existing.setTitle(route.getTitle());
+		existing.setType(route.getType());
+		existing.setStartPoint(route.getStartPoint());
+		existing.setEndPoint(route.getEndPoint());
+		existing.setStatus(route.getStatus());
 
-        Route updated = routeRepository.save(existing);
-        logger.info("Route updated successfully with id: {}", updated.getRouteId());
-        return updated;
-    }
+		Route updated = routeRepository.save(existing);
+		logger.info("Route updated successfully with id: {}", updated.getRouteId());
+		return modelMapper.map(updated, RouteResponse.class);
+	}
 
-    @Override // Method: Get All Routes
-    public List<Route> getAllRoutes() {
-        logger.info("Fetching all routes");
-        return routeRepository.findAll();
-    }
+	@Override // Get All Routes
+	public List<RouteResponse> getAllRoutes() {
+		logger.info("Fetching all routes");
+		return routeRepository.findAll().stream().map(route -> modelMapper.map(route, RouteResponse.class)).toList();
+	}
 
-    @Override // Method: Get Route by ID
-    public Route getRouteById(Long id) {
-        logger.info("Fetching route with id: {}", id);
-        return routeRepository.findById(id)
-                .orElseThrow(() -> new RouteNotFoundException("Route not found with id: " + id));
-    }
+	@Override // Get Route by ID
+	public RouteResponse getRouteById(Long id) {
+		logger.info("Fetching route with id: {}", id);
+		Route route = routeRepository.findById(id)
+				.orElseThrow(() -> new RouteNotFoundException("Route not found with id: " + id));
+		return modelMapper.map(route, RouteResponse.class);
+	}
 
-    @Override // Method: Delete Route
-    public void deleteRoute(Long id) {
-        logger.info("Deleting route with id: {}", id);
-        if (!routeRepository.existsById(id)) {
-            throw new RouteNotFoundException("Route not found with id: " + id);
-        }
-        routeRepository.deleteById(id);
-        logger.info("Route deleted successfully with id: {}", id);
-    }
+	@Override // Delete Route
+	public void deleteRoute(Long id) {
+		logger.info("Deleting route with id: {}", id);
+		if (!routeRepository.existsById(id)) {
+			throw new RouteNotFoundException("Route not found with id: " + id);
+		}
+		routeRepository.deleteById(id);
+		logger.info("Route deleted successfully with id: {}", id);
+	}
 
-    @Override // Method: Get Routes by Type
-    public List<Route> getRoutesByType(String type) {
-        logger.info("Fetching routes by type: {}", type);
-        return routeRepository.findByType(type);
-    }
+	@Override // Get Routes by Type
+	public List<RouteResponse> getRoutesByType(String type) {
+		logger.info("Fetching routes by type: {}", type);
+		return routeRepository.findByType(type).stream().map(route -> modelMapper.map(route, RouteResponse.class))
+				.toList();
+	}
+
+	@Override
+	public int countActiveRoutes() {
+		return routeRepository.countByStatus(RouteStatus.ACTIVE);
+	}
 }

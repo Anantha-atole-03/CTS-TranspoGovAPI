@@ -1,7 +1,7 @@
 package com.cts.transpogov.models;
 
-
 import com.cts.transpogov.enums.ResourceStatus;
+import com.cts.transpogov.enums.ResourceType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,25 +14,41 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity @Table(name = "resources")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Entity
+@Table(name = "resources")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Resource {
-  @Id @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "resource_id", updatable = false, nullable = false)
-  private Long resourceId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "resource_id", updatable = false, nullable = false)
+	private Long resourceId;
 
-  @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "program_id")
-  private TransportProgram program; 
+	@NotNull(message = "Program details required")
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "program_id", nullable = false)
+	private TransportProgram program;
 
-  private String type; 
-  private Double quantity;
+	@NotNull(message = "Resource type required")
+	@Enumerated(EnumType.STRING)
+	private ResourceType type;
+	@Positive(message = "Resource quantity should be positive")
+	@NotNull(message = "Resource type required")
+	private int quantity;
+	private double budget;
 
-  @Enumerated(EnumType.STRING)
-  private ResourceStatus status;
+	@NotNull(message = "Resource status required")
+	@Enumerated(EnumType.STRING)
+	private ResourceStatus status;
 }
