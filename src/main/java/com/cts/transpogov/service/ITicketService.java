@@ -17,4 +17,6 @@ public interface ITicketService {
 	String cancelTicket(Long ticketId);
 
 	String makePayment(Long ticketId, String paymentMethod);
+
+	long countTickets();
 }

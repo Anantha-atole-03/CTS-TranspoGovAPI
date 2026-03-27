@@ -5,6 +5,10 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import com.cts.transpogov.enums.ComplianceResultStatus;
+
+import lombok.RequiredArgsConstructor;
+
 
 import com.cts.transpogov.dtos.compliance.ComplianceCreateRequest;
 import com.cts.transpogov.dtos.compliance.ComplianceResponse;
@@ -12,7 +16,6 @@ import com.cts.transpogov.exceptions.ComplianceNotFoundException;
 import com.cts.transpogov.models.ComplianceRecord;
 import com.cts.transpogov.repositories.ComplianceRecordRepository;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -97,6 +100,11 @@ public class ComplianceRecordService implements IComplianceRecordService {
 		return count;
 	}
 
+	@Override
+	public int getComplianceAlerts() {
+		return repository.countByResult(ComplianceResultStatus.FAIL);
+	}
+
 	// @Override
 	// public Map<ComplianceResultStatus, Long> getStatusWiseCount() {
 	// log.info("Fetching compliance count grouped by result");
@@ -104,4 +112,5 @@ public class ComplianceRecordService implements IComplianceRecordService {
 	// .collect(Collectors.toMap(obj -> (ComplianceResultStatus) obj[0], obj ->
 	// (Long) obj[1]));
 	// }
+
 }

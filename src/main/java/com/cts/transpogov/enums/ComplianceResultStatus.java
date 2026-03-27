@@ -4,5 +4,5 @@ public enum ComplianceResultStatus {
     COMPLIANT,
     NON_COMPLIANT,
     OBSERVATION,
-    NA
+    NA, FAIL
 }
