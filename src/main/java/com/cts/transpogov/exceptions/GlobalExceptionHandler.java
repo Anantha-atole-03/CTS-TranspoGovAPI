@@ -21,6 +21,21 @@ public class GlobalExceptionHandler {
 //		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 //				.body(new ExceptionResponse(errorMap.get("name"),HttpStatus.NOT_FOUND.value()));
 //	}
+
+	@ExceptionHandler(RouteNotFoundException.class)
+	public ResponseEntity<ExceptionResponse> handleRouteNotFound(RouteNotFoundException ex) {
+		log.error("Route not found error: {}", ex.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new ExceptionResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value()));
+	}
+
+	@ExceptionHandler(ScheduleNotFoundException.class)
+	public ResponseEntity<ExceptionResponse> handleScheduleNotFound(ScheduleNotFoundException ex) {
+		log.error("Schedule not found error: {}", ex.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new ExceptionResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value()));
+	}
+
 	@ExceptionHandler(ComplianceNotFoundException.class)
 	public ResponseEntity<ExceptionResponse> handleComplianceNotFoundException(ComplianceNotFoundException e) {
 		log.error(e.getClass() + " : " + e.getMessage());

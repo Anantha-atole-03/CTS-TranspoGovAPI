@@ -152,6 +152,10 @@ public class TransportProgramServiceImpl implements ITransportProgramService {
 		programRepository.save(program);
 		return modelMapper.map(program, ProgramResponse.class);
 	}
+	@Override
+	public double calculateEfficiency() {
+		 return 87.5; // placeholder logic
+	}
 
 	/**
 	 * Validates allowed status transitions based on business rules. Prevents
