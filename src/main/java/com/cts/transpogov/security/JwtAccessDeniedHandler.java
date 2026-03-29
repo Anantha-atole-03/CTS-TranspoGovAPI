@@ -12,18 +12,17 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
-    @Override
-    public void handle(HttpServletRequest request,
-                       HttpServletResponse response,
-                       AccessDeniedException accessDeniedException)
-            throws IOException {
+	//handle the forbidden access if user has no permission return 403 you have not access the data
+	@Override
+	public void handle(HttpServletRequest request, HttpServletResponse response,
+			AccessDeniedException accessDeniedException) throws IOException {
 
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.setContentType("application/json");
-        response.getWriter().write("""
-            {
-              "error": "You do not have permission to access this resource"
-            }
-        """);
-    }
+		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+		response.setContentType("application/json");
+		response.getWriter().write("""
+				    {
+				      "error": "You do not have permission to access this resource"
+				    }
+				""");
+	}
 }

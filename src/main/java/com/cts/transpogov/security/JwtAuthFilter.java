@@ -27,11 +27,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JwtAuthFilter extends OncePerRequestFilter {
 
+	//intercept the every request check the token
 	private final UserRepository userRepository;
 	private final CitizenRepository citizenRepository;
 	private final AuthUtils authUtils;
 	private final HandlerExceptionResolver handlerExceptionResolver;
 
+	//before controller execution
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
@@ -47,6 +49,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 			}
 
 			String token = authHeader.substring(7);
+			//If the token is tampered with or expired, Jwts.parserBuilder() will throw an exception.
 			String phone = authUtils.getUsername(token);
 
 			if (phone != null && SecurityContextHolder.getContext().getAuthentication() == null) {

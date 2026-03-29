@@ -52,4 +52,5 @@ public class UserController {
     public User getuser(@PathVariable Long id) {
         return userLoginServiceImple.findById(id);
     }
+   
 }

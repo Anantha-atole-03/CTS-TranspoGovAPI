@@ -10,4 +10,5 @@ public interface IUserService {
 	UserResponse save(UserCreateRequest requestDto);
 
 	List<User> getAllUsers();
+
 }

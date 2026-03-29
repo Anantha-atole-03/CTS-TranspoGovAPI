@@ -5,16 +5,20 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cts.transpogov.dtos.citizen.CitizenCreateRequest;
 import com.cts.transpogov.dtos.citizen.CitizenResponse;
 import com.cts.transpogov.dtos.citizen.CitizenUpdateRequest;
+import com.cts.transpogov.enums.UserRole;
+import com.cts.transpogov.exceptions.AuthenticationException;
 import com.cts.transpogov.exceptions.ResourceNotFoundException; 
 import com.cts.transpogov.exceptions.UserAlreadyExistsExcetions;
 import com.cts.transpogov.models.Citizen;
 import com.cts.transpogov.repositories.CitizenRepository;
+import com.cts.transpogov.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +30,9 @@ import lombok.extern.slf4j.Slf4j;
 public class CitizenServiceImpl implements ICitizenService {
 
     private final CitizenRepository citizenRepository;
+    private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
+	private final ModelMapper modelMapper;
     private final ModelMapper mapper;
 
     @Override
@@ -70,4 +77,21 @@ public class CitizenServiceImpl implements ICitizenService {
                 .map(citizen -> mapper.map(citizen, CitizenResponse.class))
                 .collect(Collectors.toList());
     }
+
+ 
+
+	@Override
+	public CitizenResponse save(CitizenCreateRequest requestDto) {
+		Optional<Citizen> exits = citizenRepository.findByPhone(requestDto.getPhone());
+		if (exits.isPresent() || userRepository.findByPhone(requestDto.getPhone()).isPresent())
+			throw new AuthenticationException("Citizen alredy exists");
+		Citizen user = modelMapper.map(requestDto, Citizen.class);
+		user.setPhone(requestDto.getPhone());
+
+		user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+		user.setRole(UserRole.CITIZEN_PASSENGER);
+		Citizen user2 = citizenRepository.save(user);
+
+		return modelMapper.map(user2, CitizenResponse.class);
+	}
 }

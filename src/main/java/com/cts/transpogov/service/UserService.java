@@ -56,4 +56,23 @@ public class UserService implements IUserService {
 		return String.valueOf(number);
 	}
 
+	
+//	public String forgotPassword(String email) {
+//        // 1. Find user by email
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new AuthenticationException("User not found with email: " + email));
+//
+//        // 2. Generate new 6-digit password
+//        String newPassword = generateSixDigitPassword();
+//
+//        // 3. Encode and Update
+//        user.setPassword(passwordEncoder.encode(newPassword));
+//        userRepository.save(user);
+//
+//        // 4. Log it (In production, you'd trigger an Email/SMS here)
+//        log.info("New password generated for {}: {}", email, newPassword);
+//        
+//        return newPassword; // Returning for the controller to handle
+//    }
+
 }

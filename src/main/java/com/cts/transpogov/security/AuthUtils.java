@@ -16,7 +16,7 @@ import com.cts.transpogov.models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-
+//g token validate token and extract the username used inside filter and service
 @Component
 public class AuthUtils {
 

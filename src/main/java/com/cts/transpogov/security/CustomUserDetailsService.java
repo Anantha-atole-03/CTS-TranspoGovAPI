@@ -12,13 +12,15 @@ import com.cts.transpogov.repositories.CitizenRepository;
 import com.cts.transpogov.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
-
+//conntects the database with spring security
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 	private final UserRepository userRepository;
 	private final CitizenRepository citizenRepository;
 
+	//db data convert into userdetails
+	//authentication process
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Optional<User> user = userRepository.findByPhone(username);

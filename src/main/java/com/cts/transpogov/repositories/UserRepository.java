@@ -20,7 +20,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByPhone(String phone);
 	
 	List<User> findAll();
-
-public interface UserRepository extends JpaRepository<User, Long> {
-	Optional<User> findByPhone(String phone);
 }

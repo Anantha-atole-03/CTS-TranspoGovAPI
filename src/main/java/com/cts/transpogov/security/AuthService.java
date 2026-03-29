@@ -33,6 +33,13 @@ public class AuthService {
 			loginResponseDto.setPhone(citizen.getPhone());
 			loginResponseDto.setRole(citizen.getRole());
 		}
+		//This allows me to cast the Principal correctly and extract either 
+		//a userId or a citizenId to put into the JWT claims.
+		//you grab the result anywhere.
+		//usually contains one of two things
+		//A String: username or userId extracted from the JWT "sub" claim.
+		//A Custom Object A class implementing UserDetails (like a User entity) that contains the username, database ID, and email.
+		//getPrincipal() when your business logic needs to know who is calling the API:
 		String token = authUtils.generateAccessToken((UserDetails) authentication.getPrincipal());
 		loginResponseDto.setToken(token);
 		return loginResponseDto;

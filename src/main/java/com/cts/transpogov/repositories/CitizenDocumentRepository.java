@@ -8,9 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.cts.transpogov.models.Citizen;
 import com.cts.transpogov.models.CitizenDocument;
 
-public interface CitizenDocumentRepository extends JpaRepository<Citizen, Long> {
+public interface CitizenDocumentRepository extends JpaRepository<CitizenDocument, Long> {
 
-	List<CitizenDocument> findByCitizenId(Long citizenId);
+	 List<CitizenDocument> findByCitizen_CitizenId(Long citizenId);
 
 	CitizenDocument save(CitizenDocument document);
 	
