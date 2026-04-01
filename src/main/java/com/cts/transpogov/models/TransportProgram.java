@@ -35,7 +35,7 @@ import lombok.Setter;
 @Builder
 public class TransportProgram {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "program_id", updatable = false, nullable = false)
 	private Long programId;
 

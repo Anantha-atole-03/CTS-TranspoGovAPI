@@ -36,10 +36,9 @@ import lombok.Setter;
 @Builder
 public class Notification {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "notification_id", updatable = false, nullable = false)
 	private Long notificationId;
-
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = true)

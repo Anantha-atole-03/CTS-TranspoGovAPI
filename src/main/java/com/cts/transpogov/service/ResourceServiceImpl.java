@@ -16,7 +16,6 @@ import com.cts.transpogov.exceptions.ResourceNotFoundException;
 import com.cts.transpogov.models.Resource;
 import com.cts.transpogov.models.TransportProgram;
 import com.cts.transpogov.repositories.ResourceRepository;
-import com.cts.transpogov.repositories.RouteRepository;
 import com.cts.transpogov.repositories.TransportProgramRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -36,11 +35,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ResourceServiceImpl implements IResourceService {
 
-	private final RouteRepository routeRepository;
 	private final ResourceRepository resourceRepository;
 	private final TransportProgramRepository programRepository;
 	// ModelMapper for converting Entity ↔ DTO
 	private final ModelMapper modelMapper;
+	private String resourceNotFoundMessage = "Resource not found!";
 
 	/**
 	 * Fetch a single resource by its ID. Throws ResourceNotFoundException if
@@ -49,7 +48,7 @@ public class ResourceServiceImpl implements IResourceService {
 	@Override
 	public ResourceResponse getResource(Long resourceId) {
 		Resource resource = resourceRepository.findById(resourceId)
-				.orElseThrow(() -> new ResourceNotFoundException("Resource not found!"));
+				.orElseThrow(() -> new ResourceNotFoundException(resourceNotFoundMessage));
 		ResourceResponse response = modelMapper.map(resource, ResourceResponse.class);
 		// Explicitly setting programId (nested object mapping)
 		response.setProgramId(resource.getProgram().getProgramId());
@@ -89,7 +88,7 @@ public class ResourceServiceImpl implements IResourceService {
 	@Override
 	public String allocateResouce(Long resourceId) {
 		Resource resource = resourceRepository.findById(resourceId)
-				.orElseThrow(() -> new ResourceNotFoundException("Resource not found respective id"));
+				.orElseThrow(() -> new ResourceNotFoundException(resourceNotFoundMessage));
 		// Business rule: allocation allowed only in IN_PROCUREMENT state
 		if (resource.getStatus().equals(ResourceStatus.IN_PROCUREMENT)) {
 			resource.setStatus(ResourceStatus.ASSIGNED);
@@ -154,7 +153,7 @@ public class ResourceServiceImpl implements IResourceService {
 	@Override
 	public String deleteResouce(Long resourceId) {
 		Resource resource = resourceRepository.findById(resourceId)
-				.orElseThrow(() -> new ResourceNotFoundException("Resource not found!"));
+				.orElseThrow(() -> new ResourceNotFoundException(resourceNotFoundMessage));
 		log.info("Id: {} Resource deleted!", resource.getResourceId());
 		resourceRepository.delete(resource);
 		return "Resource deleted successfullty";

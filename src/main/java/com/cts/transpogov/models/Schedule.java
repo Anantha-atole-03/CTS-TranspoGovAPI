@@ -22,19 +22,26 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity @Table(name = "schedules")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Entity
+@Table(name = "schedules")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Schedule {
-  @Id @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "schedule_id", updatable = false, nullable = false)
-  private Long scheduleId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "schedule_id", updatable = false, nullable = false)
+	private Long scheduleId;
 
-  @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "route_id", nullable = false)
-  private Route route;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "route_id", nullable = false)
+	private Route route;
 
-  private LocalDate date;
-  private LocalTime time;
+	private LocalDate date;
+	private LocalTime time;
 
-  @Enumerated(EnumType.STRING)
-  private ScheduleStatus status;
+	@Enumerated(EnumType.STRING)
+	private ScheduleStatus status;
 }

@@ -20,29 +20,31 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity 
+@Entity
 @Table(name = "reports")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Report {
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "report_id", updatable = false, nullable = false)
-  private Long reportId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "report_id", updatable = false, nullable = false)
+	private Long reportId;
 
-  @NotBlank(message = "Scope is required (e.g.,Route, Ticket, or Program)")
-  @Column(nullable = false, length = 50)
-  private String scope; 
-  
-  @Column(columnDefinition = "text")
-  private String metrics; 
-  
+	@NotBlank(message = "Scope is required (e.g.,Route, Ticket, or Program)")
+	@Column(nullable = false, length = 50)
+	private String scope;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-   @JoinColumn(name = "program_id", nullable = true)
-   private TransportProgram program;
+	@Column(columnDefinition = "text")
+	private String metrics;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "program_id", nullable = true)
+	private TransportProgram program;
 
-  @CreationTimestamp
-  @Column(name = "generated_date", updatable = false)
-  private LocalDateTime generatedDate;
+	@CreationTimestamp
+	@Column(name = "generated_date", updatable = false)
+	private LocalDateTime generatedDate;
 }

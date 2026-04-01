@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
 import com.cts.transpogov.dtos.program.ProgramCreateRequest;
 import com.cts.transpogov.dtos.program.ProgramResponse;
 import com.cts.transpogov.dtos.program.ProgramUpdateRequest;
@@ -37,6 +38,8 @@ public class TransportProgramServiceImpl implements ITransportProgramService {
 	// ModelMapper for Entity ↔ DTO conversion
 	private final ModelMapper modelMapper;
 
+	private String notFoudMessage = "Program not found!";
+
 	/**
 	 * Fetches all transport programs. Converts entity list to response DTO list.
 	 */
@@ -55,7 +58,7 @@ public class TransportProgramServiceImpl implements ITransportProgramService {
 	@Override
 	public ProgramResponse getProgram(Long programId) {
 		TransportProgram program = programRepository.findById(programId)
-				.orElseThrow(() -> new ProgramNotFoundException("Program not found!"));
+				.orElseThrow(() -> new ProgramNotFoundException(notFoudMessage));
 		log.info("Id: {} Program Fetched!", programId);
 		return modelMapper.map(program, ProgramResponse.class);
 	}
@@ -78,7 +81,7 @@ public class TransportProgramServiceImpl implements ITransportProgramService {
 	@Override
 	public String submitForApproval(Long programId) {
 		TransportProgram program = programRepository.findById(programId)
-				.orElseThrow(() -> new ProgramNotFoundException("Program not found!"));
+				.orElseThrow(() -> new ProgramNotFoundException(notFoudMessage));
 		program.setStatus(ProgramStatus.SUBMITTED);
 		programRepository.save(program);
 		log.info("Id: {} Program submitted for Approve!", program.getProgramId());
@@ -91,7 +94,7 @@ public class TransportProgramServiceImpl implements ITransportProgramService {
 	@Override
 	public String approveProgram(Long programId) {
 		TransportProgram program = programRepository.findById(programId)
-				.orElseThrow(() -> new ProgramNotFoundException("Program not found!"));
+				.orElseThrow(() -> new ProgramNotFoundException(notFoudMessage));
 		program.setStatus(ProgramStatus.APPROVED);
 		programRepository.save(program);
 		log.info("Id: {} Program Approved!", program.getProgramId());
@@ -114,8 +117,6 @@ public class TransportProgramServiceImpl implements ITransportProgramService {
 			return "No change: program status is already " + current.name() + ".";
 		}
 
-//		validateTransition(current, newStatus, program);
-
 		program.setStatus(newStatus);
 		programRepository.save(program);
 
@@ -128,7 +129,7 @@ public class TransportProgramServiceImpl implements ITransportProgramService {
 	@Override
 	public ProgramResponse deleteProgram(Long programId) {
 		TransportProgram program = programRepository.findById(programId)
-				.orElseThrow(() -> new ProgramNotFoundException("Program not found!"));
+				.orElseThrow(() -> new ProgramNotFoundException(notFoudMessage));
 		programRepository.delete(program);
 		return modelMapper.map(program, ProgramResponse.class);
 	}
@@ -140,7 +141,7 @@ public class TransportProgramServiceImpl implements ITransportProgramService {
 	@Override
 	public ProgramResponse updateProgram(Long programId, ProgramUpdateRequest updateRequest) {
 		TransportProgram program = programRepository.findById(programId)
-				.orElseThrow(() -> new ProgramNotFoundException("Program not found!"));
+				.orElseThrow(() -> new ProgramNotFoundException(notFoudMessage));
 		if (!updateRequest.getTitle().isBlank())
 			program.setTitle(updateRequest.getTitle());
 		if (!updateRequest.getDescription().isBlank())
@@ -152,16 +153,17 @@ public class TransportProgramServiceImpl implements ITransportProgramService {
 		programRepository.save(program);
 		return modelMapper.map(program, ProgramResponse.class);
 	}
+
 	@Override
 	public double calculateEfficiency() {
-		 return 87.5; // placeholder logic
+		return 87.5; // placeholder logic
 	}
 
 	/**
 	 * Validates allowed status transitions based on business rules. Prevents
 	 * illegal state changes.
 	 */
-	private void validateTransition(ProgramStatus from, ProgramStatus to, TransportProgram program) {
+	public void validateTransition(ProgramStatus from, ProgramStatus to, TransportProgram program) {
 
 		switch (from) {
 		case DRAFT -> {
@@ -186,8 +188,8 @@ public class TransportProgramServiceImpl implements ITransportProgramService {
 		}
 		case COMPLETED, CANCELLED ->
 			throw new IllegalStateException("Status " + from + " is terminal. Change to " + to + " is not allowed.");
-		default -> {
-		}
+		default -> log.info("default");
+
 		}
 
 	}

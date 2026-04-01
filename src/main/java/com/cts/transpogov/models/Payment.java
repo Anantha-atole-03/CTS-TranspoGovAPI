@@ -33,7 +33,7 @@ import lombok.Setter;
 @Builder
 public class Payment {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "payment_id", updatable = false, nullable = false)
 	private Long paymentId;
 

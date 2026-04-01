@@ -2,9 +2,6 @@ package com.cts.transpogov.controllers;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -36,6 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ResourceController {
 	private final IResourceService resourceService;
+	private String successMessage = "Resource fetched successfully";
+
 	/*
 	 * Method: GET Description: It fetch all resources return:
 	 * ResponseEntity<ApiResponse> type
@@ -43,8 +42,8 @@ public class ResourceController {
 	@GetMapping("/")
 	public ResponseEntity<ApiResponse<List<ResourceResponse>>> getAllResources() {
 		log.info("All resources feteched!");
-		return ResponseEntity.ok(new ApiResponse<>("Resource fetched successfully", HttpStatus.OK.value(),
-				resourceService.getAllResouces()));
+		return ResponseEntity
+				.ok(new ApiResponse<>(successMessage, HttpStatus.OK.value(), resourceService.getAllResouces()));
 	}
 
 	/*
@@ -54,8 +53,8 @@ public class ResourceController {
 	@GetMapping("/{resourceId}")
 	public ResponseEntity<ApiResponse<ResourceResponse>> getResource(@PathVariable Long resourceId) {
 		log.info("Resource with id {} feteched", resourceId);
-		return ResponseEntity.ok(new ApiResponse<>("Resource fetched successfully", HttpStatus.OK.value(),
-				resourceService.getResource(resourceId)));
+		return ResponseEntity
+				.ok(new ApiResponse<>(successMessage, HttpStatus.OK.value(), resourceService.getResource(resourceId)));
 	}
 
 	/*
@@ -66,7 +65,7 @@ public class ResourceController {
 	public ResponseEntity<ApiResponse<List<ResourceResponse>>> getAllResourcesByProgram(
 			@RequestParam @NotNull(message = "Program id is required") Long programId) {
 		log.info("Resource with program id {} feteched", programId);
-		return ResponseEntity.ok(new ApiResponse<>("Resource fetched successfully", HttpStatus.OK.value(),
+		return ResponseEntity.ok(new ApiResponse<>(successMessage, HttpStatus.OK.value(),
 				resourceService.getAllResoucesByProgramId(programId)));
 	}
 
@@ -123,7 +122,7 @@ public class ResourceController {
 
 	}
 
-	// 29. GET /resources/{programId}/utilizations → Log resource usage
+	// GET /resources/{programId}/utilizations → Log resource usage
 	@GetMapping("/{programId}/utilizations")
 	public ResponseEntity<ApiResponse<ProgramUtilization>> getUtilizedResourcesForProgram(
 			@PathVariable Long programId) {

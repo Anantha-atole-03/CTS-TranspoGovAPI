@@ -21,21 +21,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity @Table(name = "citizen_documents")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Entity
+@Table(name = "citizen_documents")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CitizenDocument {
-  @Id @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "document_id", updatable = false, nullable = false)
-  private Long documentId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "document_id", updatable = false, nullable = false)
+	private Long documentId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "citizen_id", nullable = false)
-  private Citizen citizen;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "citizen_id", nullable = false)
+	private Citizen citizen;
 
-  private String docType; 
-  private String fileURI;
-  private LocalDate uploadedDate;
+	private String docType;
+	private String fileURI;
+	private LocalDate uploadedDate;
 
-  @Enumerated(EnumType.STRING)
-  private DocumentVerificationStatus verificationStatus;
+	@Enumerated(EnumType.STRING)
+	private DocumentVerificationStatus verificationStatus;
 }

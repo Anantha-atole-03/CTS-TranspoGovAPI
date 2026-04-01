@@ -34,11 +34,9 @@ import lombok.ToString;
 @ToString
 public class Ticket {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ticket_id", updatable = false, nullable = false)
 	private Long ticketId;
-
- 
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "citizen_id", nullable = false)
@@ -47,7 +45,6 @@ public class Ticket {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "route_id", nullable = false)
 	private Route route;
-
 
 	private LocalDateTime date;
 	private Double fareAmount;

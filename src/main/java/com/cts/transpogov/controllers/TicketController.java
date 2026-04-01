@@ -42,13 +42,13 @@ public class TicketController {
 	 * /tickets/citizen/{citizenId}
 	 */
 	@GetMapping("/citizen/{citizenId}")
-	public ResponseEntity<List<TicketResponse>> getMyAllTickets(@PathVariable Long citizenId) {
+	public ResponseEntity<ApiResponse<List<TicketResponse>>> getMyAllTickets(@PathVariable Long citizenId) {
 
 		log.info("API call: Get all tickets for CitizenId: {}", citizenId);
 
 		List<TicketResponse> tickets = ticketService.getMyAllTickets(citizenId);
 
-		return ResponseEntity.ok(tickets);
+		return ResponseEntity.ok(new ApiResponse<>("Tickets success fully fetched", HttpStatus.OK.value(), tickets));
 	}
 
 	/**
@@ -56,51 +56,56 @@ public class TicketController {
 	 * /api/tickets/{ticketId}
 	 */
 	@GetMapping("/{ticketId}")
-	public ResponseEntity<TicketResponse> getTicket(@PathVariable Long ticketId) {
+	public ResponseEntity<ApiResponse<TicketResponse>> getTicket(@PathVariable Long ticketId) {
 
 		log.info("API call: Get ticket details for TicketId: {}", ticketId);
 
 		TicketResponse response = ticketService.getTicket(ticketId);
 
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok(new ApiResponse<>("Ticket success fully fetched", HttpStatus.OK.value(), response));
+
 	}
 
 	/**
 	 * Description: Book a new ticket. URL: POST /tickets/book
 	 */
 	@PostMapping("/book")
-	public ResponseEntity<TicketResponse> bookTicket(@RequestBody TicketCreateRequest request) {
+	public ResponseEntity<ApiResponse<TicketResponse>> bookTicket(@RequestBody TicketCreateRequest request) {
 
 		log.info("API call: Book ticket for CitizenId: {}", request.getCitizenId());
 		TicketResponse response = ticketService.bookTicket(request);
 
-		return new ResponseEntity<>(response, HttpStatus.CREATED);
+		return new ResponseEntity<>(
+				new ApiResponse<>("Ticket successfully created", HttpStatus.CREATED.value(), response),
+				HttpStatus.CREATED);
 	}
 
 	/**
 	 * Description: Check and confirm ticket. URL: PUT /tickets/check/{ticketId}
 	 */
 	@PutMapping("/check/{ticketId}")
-	public ResponseEntity<String> checkTicket(@PathVariable Long ticketId) {
+	public ResponseEntity<ApiResponse<String>> checkTicket(@PathVariable Long ticketId) {
 
 		log.info("API call: Check ticket for TicketId: {}", ticketId);
 
 		String message = ticketService.checkTicket(ticketId);
 
-		return ResponseEntity.ok(message);
+		return ResponseEntity.ok(new ApiResponse<>(message, HttpStatus.OK.value(), null));
+
 	}
 
 	/**
 	 * Description: Cancel a ticket. URL: PUT /tickets/cancel/{ticketId}
 	 */
 	@PutMapping("/cancel/{ticketId}")
-	public ResponseEntity<String> cancelTicket(@PathVariable Long ticketId) {
+	public ResponseEntity<ApiResponse<String>> cancelTicket(@PathVariable Long ticketId) {
 
 		log.info("API call: Cancel ticket for TicketId: {}", ticketId);
 
 		String message = ticketService.cancelTicket(ticketId);
 
-		return ResponseEntity.ok(message);
+		return ResponseEntity.ok(new ApiResponse<>(message, HttpStatus.OK.value(), null));
+
 	}
 
 	@PostMapping("/{ticketId}/payment")

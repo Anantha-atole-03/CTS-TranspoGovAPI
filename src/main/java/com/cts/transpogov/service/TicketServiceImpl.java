@@ -46,6 +46,8 @@ public class TicketServiceImpl implements ITicketService {
 	private final CitizenRepository citizenRepository;
 	private final RouteRepository routeRepository;
 	private final PaymentRepository paymentRepository;
+	private final INotificationService notificationService;
+	private String ticketNotFoundMessage = "Ticket not found with id: {}";
 
 	/**
 	 * Fetch all tickets booked by a specific citizen.
@@ -79,8 +81,8 @@ public class TicketServiceImpl implements ITicketService {
 		log.info("Checking ticket status for TicketId: {}", ticketId);
 
 		Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> {
-			log.error("Ticket not found with id: {}", ticketId);
-			return new TicketNotFoundException("Invalid ticket id");
+			log.error(ticketNotFoundMessage, ticketId);
+			return new TicketNotFoundException("Invalid ticket");
 		});
 
 		// Validate ticket status before confirmation
@@ -117,7 +119,7 @@ public class TicketServiceImpl implements ITicketService {
 		log.info("Fetching ticket details for TicketId: {}", ticketId);
 
 		Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> {
-			log.error("Ticket not found with id: {}", ticketId);
+			log.error(ticketNotFoundMessage, ticketId);
 			return new TicketNotFoundException("Invalid ticket");
 		});
 		TicketResponse response = modelMapper.map(ticket, TicketResponse.class);
@@ -152,7 +154,13 @@ public class TicketServiceImpl implements ITicketService {
 		Ticket savedTicket = ticketRepository.save(ticket);
 
 		log.info("Ticket booked successfully. TicketId: {}", savedTicket.getTicketId());
-
+		if (citizen.getEmail() != null) {
+			String info = String.format(
+					"Title: %s <br> Route : %d <br> Start from: %s <br> End Stop: %s <br> Time: %s <br> <b>Payment Status:</b> %s",
+					ticket.getRoute().getTitle(), ticket.getRoute().getRouteId(), ticket.getRoute().getStartPoint(),
+					ticket.getRoute().getEndPoint(), ticket.getDate().toString(), ticket.getStatus().toString());
+			notificationService.sendTicketNotification(citizen.getEmail(), info, ticket.getTicketId());
+		}
 		TicketResponse response = modelMapper.map(savedTicket, TicketResponse.class);
 		response.setCitizenId(citizen.getCitizenId());
 
@@ -166,7 +174,7 @@ public class TicketServiceImpl implements ITicketService {
 
 		// Fetch ticket or throw exception
 		Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> {
-			log.error("Ticket not found with id: {}", ticketId);
+			log.error(ticketNotFoundMessage, ticketId);
 			return new TicketNotFoundException("Invalid ticket id");
 		});
 
@@ -196,8 +204,8 @@ public class TicketServiceImpl implements ITicketService {
 		log.info("Initiating payment for TicketId: {}", ticketId);
 
 		Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> {
-			log.error("Ticket not found with id: {}", ticketId);
-			return new TicketNotFoundException("Invalid ticket id");
+			log.error(ticketNotFoundMessage, ticketId);
+			return new TicketNotFoundException("Invalid ticket with id");
 		});
 
 		if (!ticket.getStatus().equals(TicketStatus.PENDING_PAYMENT)) {
@@ -214,6 +222,14 @@ public class TicketServiceImpl implements ITicketService {
 		ticketRepository.save(ticket);
 
 		log.info("Payment successful for TicketId: {}", ticketId);
+		if (ticket.getCitizen().getEmail() != null) {
+			String info = String.format(
+					"Title: %s <br> Route : %d <br> Start from: %s <br> End Stop: %s <br> Time: %s <br> <b>Payment Status:</b> %s <br>Payment successful <br> Transaction Id:%d <br> Amount:%f",
+					ticket.getRoute().getTitle(), ticket.getRoute().getRouteId(), ticket.getRoute().getStartPoint(),
+					ticket.getRoute().getEndPoint(), ticket.getDate().toString(), ticket.getStatus().toString(),
+					payment.getPaymentId(), ticket.getFareAmount());
+			notificationService.sendTicketNotification(ticket.getCitizen().getEmail(), info, ticket.getTicketId());
+		}
 
 		return "Payment successful. Ticket confirmed.";
 	}
