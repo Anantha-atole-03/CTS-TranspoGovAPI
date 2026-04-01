@@ -16,8 +16,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,9 +24,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-//@ToString(exclude = "findings")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "audit")
 public class Audit {
@@ -36,7 +31,6 @@ public class Audit {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "Auditid")
-	@EqualsAndHashCode.Include
 	private Long id;
 
 	@JoinColumn(name = "officer_id ", nullable = false)
@@ -48,18 +42,13 @@ public class Audit {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "Status", nullable = false, length = 20)
-	@Builder.Default
 	private AuditStatus status = AuditStatus.OPEN;
 
 	@Column(name = "Date", nullable = false)
-	@Builder.Default
 	private LocalDateTime startedAt = LocalDateTime.now();
 
 	@Column(name = "ClosedAt")
 	private LocalDateTime closedAt;
-
-//	@Column(name = "ReportUrl", length = 500)
-//	private String reportUrl;
 
 	private String findings;
 

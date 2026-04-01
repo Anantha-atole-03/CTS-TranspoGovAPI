@@ -12,6 +12,7 @@ import com.cts.transpogov.dtos.Audit.CreateAuditRequest;
 import com.cts.transpogov.dtos.Audit.GenerateReportResponse;
 import com.cts.transpogov.dtos.Audit.UpdateAuditRequest;
 import com.cts.transpogov.enums.AuditStatus;
+import com.cts.transpogov.exceptions.AuditCloseNotFoundException;
 import com.cts.transpogov.exceptions.AuditNotFoundException;
 import com.cts.transpogov.models.Audit;
 import com.cts.transpogov.models.User;
@@ -24,37 +25,55 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+
 public class AuditService implements IAuditService {
 
 	private final UserRepository userRepository;
 
 	private final AuditRepository auditRepository;
 
-	/* ---------------- FIND ALL ---------------- */
+	/**
+	 * Retrieves all audit records from the database.
+	 *
+	 * @return list of {@link AuditResponse} representing all audits
+	 * 
+	 **/
 
 	@Override
 	public List<AuditResponse> findAll() {
 		log.info("Fetching all audit records");
-		List<AuditResponse> result = auditRepository.findAll().stream().map(this::toAuditResponse)
-				.collect(Collectors.toList());
+		List<AuditResponse> result = auditRepository.findAll().stream().map(this::toAuditResponse).toList();
 		log.info("Fetched {} audit records", result.size());
 		return result;
 	}
 
-	/* ---------------- FIND BY ID ---------------- */
+	/**
+	 * Fetches a single audit record by its unique identifier.
+	 *
+	 * @param id the audit ID
+	 * @return {@link AuditResponse} containing audit details
+	 * @throws AuditNotFoundException if the audit does not exist
+	 */
 
 	@Override
 	public AuditResponse findById(Long id) {
 		log.info("Fetching audit by id: {}", id);
 		Audit audit = auditRepository.findById(id).orElseThrow(() -> {
 			log.warn("Audit not found for id: {}", id);
-			return new AuditNotFoundException("Audit Record not found");
+			throw new AuditNotFoundException("Audit Record not found");
 		});
 		log.info("Fetched audit id: {}", audit.getId());
 		return toAuditResponse(audit);
 	}
 
-	/* ---------------- CREATE ---------------- */
+	/**
+	 * Creates a new audit record.
+	 *
+	 * The audit is initialized with OPEN status and the current timestamp.
+	 *
+	 * @param req the request containing audit creation details
+	 * @return {@link AuditResponse} of the newly created audit
+	 */
 
 	@Override
 	public AuditResponse create(CreateAuditRequest req) {
@@ -63,7 +82,6 @@ public class AuditService implements IAuditService {
 		Audit audit = new Audit();
 		User officer = userRepository.findById(req.getOfficerId())
 				.orElseThrow(() -> new RuntimeException("Compliance officer not found with id:" + req.getOfficerId()));
-//		if(!officer.getRole().equals(UserRole.COMPLIANCE_OFFICER)){throw new RuntimeException("You have not permission, Access denied!")}
 		audit.setOfficer(officer);
 		audit.setScope(req.getScope());
 		audit.setStatus(AuditStatus.OPEN);
@@ -74,7 +92,15 @@ public class AuditService implements IAuditService {
 		return toAuditResponse(saved);
 	}
 
-	/* ---------------- UPDATE ---------------- */
+	/**
+	 * Updates an existing audit record. Allows modification of scope, findings, and
+	 * status. Automatically sets closure time if the status is changed to CLOSED.
+	 * 
+	 * @param id  the audit ID
+	 * @param req the update request
+	 * @return {@link AuditResponse} of the updated audit
+	 * @throws AuditNotFoundException if the audit does not exist
+	 */
 
 	@Override
 	public AuditResponse update(Long id, UpdateAuditRequest req) {
@@ -95,7 +121,14 @@ public class AuditService implements IAuditService {
 		log.info("Audit updated successfully, id: {}", updatedAudit.getId());
 		return toAuditResponse(updatedAudit);
 	}
-	/* ---------------- DELETE ---------------- */
+
+	/**
+	 * Deletes an audit record by its ID.
+	 *
+	 * @param id the audit ID
+	 * @return confirmation message
+	 * @throws AuditNotFoundException if the audit does not exist
+	 */
 
 	@Override
 	public String delete(Long id) {
@@ -110,7 +143,12 @@ public class AuditService implements IAuditService {
 		return "Record deleted Successfully";
 	}
 
-	/* ---------------- REPORT ---------------- */
+	/**
+	 * Generates a report for the specified audit.
+	 *
+	 * @param auditId the audit ID
+	 * @return {@link GenerateReportResponse} containing report details
+	 */
 
 	@Override
 	public GenerateReportResponse generateReport(Long auditId) {
@@ -128,13 +166,24 @@ public class AuditService implements IAuditService {
 		return resp;
 	}
 
-	/* ---------------- COUNT ---------------- */
+	/**
+	 * Returns the total count of audit records.
+	 *
+	 * @return total number of audits
+	 */
+
 	@Override
 	public Long getCount() {
 		Long count = auditRepository.count();
 		log.info("Audit records count: {}", count);
 		return count;
 	}
+
+	/**
+	 * Retrieves audit counts grouped by their current status.
+	 *
+	 * @return map of {@link AuditStatus} to count
+	 */
 
 	@Override
 	public Map<AuditStatus, Long> getStatusWiseCount() {
@@ -143,7 +192,38 @@ public class AuditService implements IAuditService {
 				.collect(Collectors.toMap(obj -> (AuditStatus) obj[0], obj -> (Long) obj[1]));
 	}
 
-	/* ---------------- HELPER ---------------- */
+	/**
+	 * Closes an audit if it is not already closed.
+	 *
+	 * @param auditId the audit ID
+	 * @return {@link AuditResponse} of the closed audit
+	 * @throws AuditNotFoundException      if the audit does not exist
+	 * @throws AuditCloseNotFoundException if the audit is already closed
+	 */
+
+	@Override
+	public AuditResponse closeAudit(Long auditId) {
+		log.info("Closing audit id: {}", auditId);
+
+		Audit a = auditRepository.findById(auditId).orElseThrow(() -> {
+			log.warn("Audit not found for closeAudit, id: {}", auditId);
+			throw new AuditNotFoundException("Audit not found: " + auditId);
+		});
+		if (a.getStatus().equals(AuditStatus.CLOSED))
+			throw new AuditCloseNotFoundException(" Audit is Already Closed");
+		a.setStatus(AuditStatus.CLOSED);
+		a.setClosedAt(LocalDateTime.now());
+		Audit saved = auditRepository.save(a);
+		log.info("Audit closed id: {}, closedAt: {}", saved.getId(), saved.getClosedAt());
+		return toAuditResponse(saved);
+	}
+
+	/**
+	 * Converts an {@link Audit} entity into an {@link AuditResponse} DTO.
+	 *
+	 * @param audit the audit entity
+	 * @return mapped audit response DTO
+	 */
 
 	private AuditResponse toAuditResponse(Audit audit) {
 		AuditResponse dto = new AuditResponse();
@@ -153,26 +233,8 @@ public class AuditService implements IAuditService {
 		dto.setStatus(audit.getStatus());
 		dto.setStartedAt(audit.getStartedAt());
 		dto.setClosedAt(audit.getClosedAt());
-//		dto.setReportUrl(audit.getReportUrl());
 		dto.setFindings(audit.getFindings());
 		return dto;
-	}
-
-	@Override
-	public AuditResponse closeAudit(Long auditId) {
-		log.info("Closing audit id: {}", auditId);
-
-		Audit a = auditRepository.findById(auditId).orElseThrow(() -> {
-			log.warn("Audit not found for closeAudit, id: {}", auditId);
-			return new AuditNotFoundException("Audit not found: " + auditId);
-		});
-		if (a.getStatus().equals(AuditStatus.CLOSED))
-			throw new RuntimeException(" Audit is Already Closed");
-		a.setStatus(AuditStatus.CLOSED);
-		a.setClosedAt(LocalDateTime.now());
-		Audit saved = auditRepository.save(a);
-		log.info("Audit closed id: {}, closedAt: {}", saved.getId(), saved.getClosedAt());
-		return toAuditResponse(saved);
 	}
 
 }

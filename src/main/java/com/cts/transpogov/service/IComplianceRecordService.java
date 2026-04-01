@@ -12,16 +12,14 @@ public interface IComplianceRecordService {
 
 	Long getCount();
 
-	String create(ComplianceCreateRequest record);
+	String create(ComplianceCreateRequest complianceCreateRequest);
 
-	ComplianceResponse update(Long id, ComplianceCreateRequest record);
+	ComplianceResponse update(Long id, ComplianceCreateRequest complianceCreateRequest);
 
 	String delete(Long id);
 
 	ComplianceResponse findById(Long id);
+
 	int getComplianceAlerts();
 
-//	Map<ComplianceResultStatus, Long> getStatusWiseCount();
-
 }
-

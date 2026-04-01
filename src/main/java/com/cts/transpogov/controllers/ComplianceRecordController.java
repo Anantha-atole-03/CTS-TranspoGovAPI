@@ -73,11 +73,5 @@ public class ComplianceRecordController {
 		List<ComplianceResponse> list = service.findByEntityId(entityId);
 		return ResponseEntity.ok(new ApiResponse<>("Records fetched by entityId!", HttpStatus.OK.value(), list));
 	}
-//
-//	@GetMapping("/summary")
-//	public ResponseEntity<ApiResponse<?>> getCount() {
-//		return ResponseEntity
-//				.ok(new ApiResponse<>("Count fetched!", HttpStatus.OK.value(), service.getStatusWiseCount()));
-//	}
 
 }

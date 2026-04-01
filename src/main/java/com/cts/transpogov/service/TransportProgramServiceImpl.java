@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
 import com.cts.transpogov.dtos.program.ProgramCreateRequest;
 import com.cts.transpogov.dtos.program.ProgramResponse;
 import com.cts.transpogov.dtos.program.ProgramUpdateRequest;
@@ -114,8 +115,6 @@ public class TransportProgramServiceImpl implements ITransportProgramService {
 			return "No change: program status is already " + current.name() + ".";
 		}
 
-//		validateTransition(current, newStatus, program);
-
 		program.setStatus(newStatus);
 		programRepository.save(program);
 
@@ -152,9 +151,10 @@ public class TransportProgramServiceImpl implements ITransportProgramService {
 		programRepository.save(program);
 		return modelMapper.map(program, ProgramResponse.class);
 	}
+
 	@Override
 	public double calculateEfficiency() {
-		 return 87.5; // placeholder logic
+		return 87.5; // placeholder logic
 	}
 
 	/**

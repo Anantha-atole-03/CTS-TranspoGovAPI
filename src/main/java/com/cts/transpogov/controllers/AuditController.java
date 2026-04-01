@@ -30,6 +30,7 @@ public class AuditController {
 	}
 
 	/* ========= POST /audits — Create audit ========= */
+
 	@PostMapping("/create")
 	public ResponseEntity<AuditResponse> create(@RequestBody CreateAuditRequest request) {
 		AuditResponse response = auditService.create(request);
@@ -76,12 +77,5 @@ public class AuditController {
 		return ResponseEntity
 				.ok(new ApiResponse<>("Count fetched!", HttpStatus.OK.value(), auditService.getStatusWiseCount()));
 	}
-
-//	/* ========= POST /audits/{id}/report — Generate report ========= */
-//	@GetMapping("/{id}/report")
-//	public ResponseEntity<ApiResponse<GenerateReportResponse>> generateReport(@PathVariable Long id) {
-//		GenerateReportResponse dto = auditService.generateReport(id);
-//		return ResponseEntity.ok(new ApiResponse<>("Report generated!", HttpStatus.OK.value(), dto));
-//	}
 
 }
