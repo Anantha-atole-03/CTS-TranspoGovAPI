@@ -16,23 +16,39 @@ import com.cts.transpogov.models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-//g token validate token and extract the username used inside filter and service
+
+/**
+ * Utility component for JSON Web Token (JWT) management.
+ * Handles token generation, validation, and claim extraction for the security filter and services.
+ */
 @Component
 public class AuthUtils {
 
 	@Value("${jwt.secret}")
 	private String jwtSecret;
 
+	/**
+	 * Converts the configured secret string into a cryptographic HMAC key.
+	 * @return A SecretKey for signing and parsing JWTs.
+	 */
 	private SecretKey getSecretKey() {
 		return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
 	}
 
+	/**
+	 * Generates a signed JWT access token for an authenticated user or citizen.
+	 * 
+	 * @param userDetails The authenticated principal object.
+	 * @return A compact, URL-safe JWT string.
+	 * @throws IllegalArgumentException If the userDetails type is not User or Citizen.
+	 */
 	public String generateAccessToken(UserDetails userDetails) {
 
 		String phone;
 		UserRole role;
 		String id;
 
+		// Identify the entity type to extract specific identification details
 		if (userDetails instanceof User user) {
 			phone = user.getPhone();
 			role = user.getRole();
@@ -44,22 +60,56 @@ public class AuthUtils {
 			id = citizen.getCitizenId().toString();
 
 		} else {
+			// Fail-safe for unsupported security principal types
 			throw new IllegalArgumentException("Unsupported UserDetails type");
 		}
 
-		return Jwts.builder().setSubject(phone).claim("id", id).claim("role", role).setIssuedAt(new Date())
-				.setExpiration(new Date(System.currentTimeMillis() + (5 * 60 * 60 * 1000))).signWith(getSecretKey())
+		/*
+		 * Build the JWT:
+		 * - setSubject: Stores the phone number (primary identifier).
+		 * - claim("id"): Stores the database primary key.
+		 * - claim("role"): Stores the user's authorization level.
+		 * - setExpiration: Valid for 5 hours.
+		 */
+		return Jwts.builder()
+				.setSubject(phone)
+				.claim("id", id)
+				.claim("role", role)
+				.setIssuedAt(new Date())
+				.setExpiration(new Date(System.currentTimeMillis() + (5 * 60 * 60 * 1000)))
+				.signWith(getSecretKey())
 				.compact();
 	}
 
+	/**
+	 * Parses the provided JWT to extract the payload (Claims).
+	 * This method implicitly validates the token's signature and expiration.
+	 * 
+	 * @param token The JWT string.
+	 * @return The Claims object containing the token payload.
+	 */
 	private Claims getClaims(String token) {
-		return Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(token).getBody();
+		return Jwts.parserBuilder()
+				.setSigningKey(getSecretKey())
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
 	}
 
+	/**
+	 * Extracts the 'subject' (phone number) from the token.
+	 * @param token The JWT string.
+	 * @return The phone number stored in the token.
+	 */
 	public String getUsername(String token) {
 		return getClaims(token).getSubject();
 	}
 
+	/**
+	 * Extracts the 'role' claim from the token.
+	 * @param token The JWT string.
+	 * @return The UserRole as a string.
+	 */
 	public String getRole(String token) {
 		return getClaims(token).get("role", String.class);
 	}

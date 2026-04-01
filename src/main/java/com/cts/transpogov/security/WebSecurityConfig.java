@@ -12,78 +12,113 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Main Security Configuration class. Defines the security filter chain, path
+ * permissions, and role-based access controls (RBAC) for the entire
+ * application.
+ */
 @Configuration
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    private final JwtAuthFilter jwtAuthFilter;
-    private final JwtAccessDeniedHandler accessDeniedHandler;
-    private final JwtAuthenticationEntryPoint authenticationEntryPoint;
+	private final JwtAuthFilter jwtAuthFilter;
+	private final JwtAccessDeniedHandler accessDeniedHandler;
+	private final JwtAuthenticationEntryPoint authenticationEntryPoint;
 
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	/**
+	 * Configures the HTTP security, including CSRF, session management, and URL
+	 * authorization.
+	 */
+	@Bean
+	SecurityFilterChain securityFilterChain(HttpSecurity http) {
 
-    	//stateless APIs
-    	//Enabling it would add unnecessary overhead
-    	//CSRF attacks mainly target cookie-based sessions where the browser automatically appends credentials.
-        http.csrf(csrf -> csrf.disable())
-        //tells Spring not to create an HttpSession
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .formLogin(form -> form.disable())
-            .httpBasic(basic -> basic.disable())
-            //Handles 401 Unauthorized errors (when a token is missing or invalid).
-            .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint)
-            		//Handles 403 Forbidden errors (when a user is logged in but doesn't have the right Role).
-                    .accessDeniedHandler(accessDeniedHandler))
-            .authorizeHttpRequests(auth -> auth
-                // Public & Swagger Endpoints
-                .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                
-                // Existing Program & Ticket Endpoints
-                .requestMatchers(HttpMethod.GET, "/programs/{programId}").permitAll()
-                .requestMatchers(HttpMethod.GET, "/tickets/**").hasAnyRole("PASSENGER", "TRANSPORT_OFFICER")
-                .requestMatchers(HttpMethod.POST, "/tickets/*/check").hasRole("TRANSPORT_OFFICER")
-                .requestMatchers(HttpMethod.GET, "/programs").hasAnyRole("PASSENGER", "TRANSPORT_OFFICER", "PROGRAM_MANAGER", "ADMIN", "COMPLIANCE_OFFICER")
-                .requestMatchers(HttpMethod.POST, "/programs").hasRole("PROGRAM_MANAGER")
-                .requestMatchers(HttpMethod.POST, "/programs/*/submit").hasRole("PROGRAM_MANAGER")
-                .requestMatchers(HttpMethod.POST, "/programs/*/approve").hasAnyRole("PROGRAM_MANAGER", "ADMIN")
-                .requestMatchers(HttpMethod.GET, "/resources").hasAnyRole("PROGRAM_MANAGER", "ADMIN", "COMPLIANCE_OFFICER")
-                .requestMatchers(HttpMethod.POST, "/resources/*/allocate").hasAnyRole("PROGRAM_MANAGER", "COMPLIANCE_OFFICER")
-                .requestMatchers(HttpMethod.POST, "/resources/*/utilizations").hasAnyRole("PROGRAM_MANAGER", "COMPLIANCE_OFFICER")
+		http.csrf(csrf -> csrf.disable()) // Disabling CSRF as we use JWTs
+				// Ensuring the application is stateless (no HttpSession used)
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.formLogin(form -> form.disable()) // Disable default form-based login
+				.httpBasic(basic -> basic.disable()) // Disable basic authentication
 
-                // --- NEW ENDPOINTS (38 - 43) ---
+				// Customizing error handling for 401 (Unauthorized) and 403 (Forbidden)
+				.exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint)
+						.accessDeniedHandler(accessDeniedHandler))
 
-                // 38: Operational Dashboard
-                .requestMatchers(HttpMethod.GET, "/reports/operations").hasAnyRole("PROGRAM_MANAGER", "ADMIN", "COMPLIANCE_OFFICER", "GOVERNMENT_AUDITOR")
+				.authorizeHttpRequests(auth -> auth
 
-                // 39: Generate new report
-                .requestMatchers(HttpMethod.POST, "/reports/custom/run").hasAnyRole("PROGRAM_MANAGER", "ADMIN", "COMPLIANCE_OFFICER", "GOVERNMENT_AUDITOR")
+						// --- Public Endpoints ---
+						.requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**","/api/audit-logs/**").permitAll()
 
-                // 40: Check report status
-                .requestMatchers(HttpMethod.GET, "/reports/custom/jobs/**").hasAnyRole("PROGRAM_MANAGER", "ADMIN", "COMPLIANCE_OFFICER", "GOVERNMENT_AUDITOR")
+						// --- Admin & Audit Specific ---
+						.requestMatchers(HttpMethod.PUT, "/api/citizens/{userId}/role").hasRole("ADMIN")
+						.requestMatchers("/api/audit-logs/**").hasAnyRole("ADMIN", "AUDITOR")
+						
+				
 
-                // 41 & 42: Notifications (All Roles - Note: "Own" logic should be in Service layer)
-                .requestMatchers(HttpMethod.GET, "/notifications").authenticated()
-                .requestMatchers(HttpMethod.PATCH, "/notifications/**").authenticated()
+						// --- Citizen Management Endpoints ---
+						.requestMatchers(HttpMethod.POST, "/api/citizens").permitAll() // Allow registration
+						.requestMatchers(HttpMethod.GET, "/api/citizens")
+						.hasAnyRole("ADMINISTRATOR", "TRANSPORT_OFFICER", "COMPLIANCE_OFFICER")
+						.requestMatchers(HttpMethod.GET, "/api/citizens/{id}")
+						.hasAnyRole("ADMINISTRATOR", "CITIZEN_PASSENGER")
+						.requestMatchers(HttpMethod.PUT, "/api/citizens/{id}")
+						.hasAnyRole("ADMINISTRATOR", "CITIZEN_PASSENGER")
 
-                // 43: Push notification
-                .requestMatchers(HttpMethod.POST, "/notifications/save").hasAnyRole("TRANSPORT_OFFICER", "PROGRAM_MANAGER", "ADMIN", "COMPLIANCE_OFFICER")
+						// --- Document Management ---
+						.requestMatchers(HttpMethod.POST, "/api/citizen-documents/upload/**")
+						.hasRole("CITIZEN_PASSENGER")
+						.requestMatchers(HttpMethod.GET, "/api/citizen-documents/citizen/**")
+						.hasAnyRole("CITIZEN_PASSENGER", "TRANSPORT_OFFICER", "ADMINISTRATOR")
+						.requestMatchers(HttpMethod.PUT, "/api/citizen-documents/verify/**")
+						.hasAnyRole("TRANSPORT_OFFICER", "COMPLIANCE_OFFICER")
 
-                // Admin specific
-                .requestMatchers("/user/**").hasRole("ADMIN")
+						// --- Programs and Ticketing ---
+						.requestMatchers(HttpMethod.GET, "/programs/{programId}").permitAll()
+						.requestMatchers(HttpMethod.GET, "/tickets/**").hasAnyRole("PASSENGER", "TRANSPORT_OFFICER")
+						.requestMatchers(HttpMethod.POST, "/tickets/*/check").hasRole("TRANSPORT_OFFICER")
+						.requestMatchers(HttpMethod.GET, "/programs")
+						.hasAnyRole("PASSENGER", "TRANSPORT_OFFICER", "PROGRAM_MANAGER", "ADMIN", "COMPLIANCE_OFFICER")
+						.requestMatchers(HttpMethod.POST, "/programs").hasRole("PROGRAM_MANAGER")
+						.requestMatchers(HttpMethod.POST, "/programs/*/submit").hasRole("PROGRAM_MANAGER")
+						.requestMatchers(HttpMethod.POST, "/programs/*/approve").hasAnyRole("PROGRAM_MANAGER", "ADMIN")
 
-                .anyRequest().authenticated()
-            )//The Filter Injection
-            //This is the most critical line. By default, Spring looks for a username/password in a form. You are telling Spring:
-            //"Before you try the standard login, run my jwtAuthFilter
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+						// --- Resource Allocation ---
+						.requestMatchers(HttpMethod.GET, "/resources")
+						.hasAnyRole("PROGRAM_MANAGER", "ADMIN", "COMPLIANCE_OFFICER")
+						.requestMatchers(HttpMethod.POST, "/resources/*/allocate")
+						.hasAnyRole("PROGRAM_MANAGER", "COMPLIANCE_OFFICER")
+						.requestMatchers(HttpMethod.POST, "/resources/*/utilizations")
+						.hasAnyRole("PROGRAM_MANAGER", "COMPLIANCE_OFFICER")
 
-        return http.build();
-    }
+						// --- Reporting ---
+						.requestMatchers(HttpMethod.GET, "/reports/operations")
+						.hasAnyRole("PROGRAM_MANAGER", "ADMIN", "COMPLIANCE_OFFICER", "GOVERNMENT_AUDITOR")
+						.requestMatchers(HttpMethod.POST, "/reports/custom/run")
+						.hasAnyRole("PROGRAM_MANAGER", "ADMIN", "COMPLIANCE_OFFICER", "GOVERNMENT_AUDITOR")
+						.requestMatchers(HttpMethod.GET, "/reports/custom/jobs/**")
+						.hasAnyRole("PROGRAM_MANAGER", "ADMIN", "COMPLIANCE_OFFICER", "GOVERNMENT_AUDITOR")
 
-    @Bean
-    AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-            throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
+						// --- Notifications ---
+						.requestMatchers(HttpMethod.GET, "/notifications").authenticated()
+						.requestMatchers(HttpMethod.PATCH, "/notifications/**").authenticated()
+						.requestMatchers(HttpMethod.POST, "/notifications/save")
+						.hasAnyRole("TRANSPORT_OFFICER", "PROGRAM_MANAGER", "ADMIN", "COMPLIANCE_OFFICER")
+
+						// --- User Management ---
+						.requestMatchers("/user/**").hasRole("ADMIN")
+
+						// All other requests must be authenticated
+						.anyRequest().authenticated())
+				// Adding our custom JWT filter before the standard
+				// UsernamePasswordAuthenticationFilter
+				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+		return http.build();
+	}
+
+	/**
+	 * Exposes the AuthenticationManager as a Bean to be used in AuthService.
+	 */
+	@Bean
+	AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
+		return authenticationConfiguration.getAuthenticationManager();
+	}
 }

@@ -1,16 +1,20 @@
 package com.cts.transpogov.models;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.cts.transpogov.enums.ProgramStatus;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -53,4 +57,8 @@ public class TransportProgram {
 
 	@Enumerated(EnumType.STRING)
 	private ProgramStatus status;
+
+	@OneToMany(mappedBy = "program", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Resource> resources;
+
 }

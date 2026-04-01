@@ -7,11 +7,14 @@ import com.cts.transpogov.dtos.user.UserCreateRequest;
 import com.cts.transpogov.enums.UserRole;
 import com.cts.transpogov.models.User;
 import com.cts.transpogov.repositories.UserRepository;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j; 
 
+/**
+ * Service implementation for managing user login and profile state.
+ * Annotated with @Transactional to ensure database integrity during updates.
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -21,15 +24,16 @@ public class UserLoginServiceImple implements IUserLoginService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
+    /**
+     * Converts a request DTO into a User entity and persists it.
+     * @param request The user creation details.
+     * @return The newly created User entity.
+     * @throws IllegalStateException if the mapping process fails.
+     */
     @Override
     public User createUser(UserCreateRequest request) {
         log.info("Attempting to create user with email: {}", request.getEmail());
         
-        if (request == null) {
-            log.error("User creation failed: Request object is null");
-            throw new IllegalArgumentException("Request cannot be null");
-        }
-
         User user = modelMapper.map(request, User.class);
         
         if (user == null) {
@@ -42,14 +46,25 @@ public class UserLoginServiceImple implements IUserLoginService {
         return savedUser;
     }
 
+    /**
+     * Retrieves all users currently stored in the system.
+     * @return A list of all User entities.
+     */
     @Override
     public List<User> getAllUser() {
         log.debug("Fetching all users from database");
         return userRepository.findAll();
     }
 
+    /**
+     * Updates an existing user's profile by merging new data into the existing record.
+     * @param user   The object containing updated data.
+     * @param userId The ID of the user to update.
+     * @throws IllegalArgumentException if ID is invalid.
+     * @throws RuntimeException if the user is not found.
+     */
     @Override
-    public void UpdateUser(User user, Long userId) {
+    public void updateUser(User user, Long userId) {
         log.info("Attempting to update user details for ID: {}", userId);
 
         if (userId == null || userId <= 0) {
@@ -63,15 +78,23 @@ public class UserLoginServiceImple implements IUserLoginService {
                 return new RuntimeException("User not found");
             });
 
+        // Merges non-null fields from 'user' into 'existingUser'
         modelMapper.map(user, existingUser);
+        
+        // Ensure the ID remains consistent during the merge
         existingUser.setUserId(userId);
 
         userRepository.save(existingUser);
         log.info("User with ID: {} updated successfully", userId);
     }
 
+    /**
+     * Specifically updates the administrative or access role of a user.
+     * @param userRole The new role to assign.
+     * @param userId   The ID of the target user.
+     */
     @Override
-    public void UpdateUserRoles(UserRole userRole, Long userId) {
+    public void updateUserRoles(UserRole userRole, Long userId) {
         log.info("Updating role to {} for user ID: {}", userRole, userId);
         
         if (userId == null || userRole == null) {
@@ -90,6 +113,11 @@ public class UserLoginServiceImple implements IUserLoginService {
         log.info("Role updated successfully for user ID: {}", userId);
     }
 
+    /**
+     * Finds a single user by their primary key.
+     * @param id The user ID.
+     * @return The User entity if found, or null if not present.
+     */
     @Override
     public User findById(Long id) {
         log.debug("Finding user by ID: {}", id);
@@ -99,8 +127,4 @@ public class UserLoginServiceImple implements IUserLoginService {
         }
         return userRepository.findById(id).orElse(null);
     }
-
-	
-    
-    
 }

@@ -12,15 +12,57 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GlobalExceptionHandler {
 
+
 	private final ComplianceRecordService complianceRecordService;
 
 	GlobalExceptionHandler(ComplianceRecordService complianceRecordService) {
 		this.complianceRecordService = complianceRecordService;
 	}
+//	
+//	@ExceptionHandler(MethodArgumentNotValidException.class)
+//	public ResponseEntity<?> handleInvalidInputException(MethodArgumentNotValidException e) {
+//	
+//		Map<String, String> errorMap = e.getFieldErrors().stream()
+//				.collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+//		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//				.body(new ExceptionResponse(errorMap.get("name"),HttpStatus.NOT_FOUND.value()));
+//	}
+
+	@ExceptionHandler(RouteNotFoundException.class)
+	public ResponseEntity<ExceptionResponse> handleRouteNotFound(RouteNotFoundException ex) {
+		log.error("Route not found error: {}", ex.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new ExceptionResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value()));
+	}
+
+	@ExceptionHandler(ScheduleNotFoundException.class)
+	public ResponseEntity<ExceptionResponse> handleScheduleNotFound(ScheduleNotFoundException ex) {
+		log.error("Schedule not found error: {}", ex.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new ExceptionResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value()));
+	}
+
+	@ExceptionHandler(ComplianceNotFoundException.class)
+	public ResponseEntity<ExceptionResponse> handleComplianceNotFoundException(ComplianceNotFoundException e) {
+		log.error(e.getClass() + " : " + e.getMessage());
+
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new ExceptionResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
+	}
+
+	@ExceptionHandler(AuditNotFoundException.class)
+	public ResponseEntity<ExceptionResponse> handleAuditNotFoundException(AuditNotFoundException e) {
+		log.error(e.getClass() + " : " + e.getMessage());
+
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new ExceptionResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
+
+	}
 
 	@ExceptionHandler(TicketStatusException.class)
 	public ResponseEntity<ExceptionResponse> handleTicketStatusException(TicketStatusException e) {
 		log.error(e.getClass() + " : " + e.getMessage());
+
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ExceptionResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
 	}
@@ -78,8 +120,12 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ExceptionResponse> handleException(Exception e) {
+
 		System.out.println("" + e.getClass());
 		log.error(e.getClass() + " : " + e.getMessage() + " ");
+
+		log.error(e.getClass() + " : " + e.getMessage());
+
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ExceptionResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
 	}

@@ -1,6 +1,4 @@
 package com.cts.transpogov.dtos.ticket;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.cts.transpogov.dtos.route.RouteResponse;

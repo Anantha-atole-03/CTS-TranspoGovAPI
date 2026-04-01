@@ -1,20 +1,22 @@
 package com.cts.transpogov.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.cts.transpogov.dtos.program.ProgramUtilization;
 import com.cts.transpogov.dtos.program.ResourceCreateRequest;
 import com.cts.transpogov.dtos.program.ResourceResponse;
+import com.cts.transpogov.enums.ProgramStatus;
 import com.cts.transpogov.enums.ResourceStatus;
 import com.cts.transpogov.exceptions.ProgramNotFoundException;
 import com.cts.transpogov.exceptions.ResourceAllocationException;
 import com.cts.transpogov.exceptions.ResourceNotFoundException;
 import com.cts.transpogov.models.Resource;
+import com.cts.transpogov.models.TransportProgram;
 import com.cts.transpogov.repositories.ResourceRepository;
+import com.cts.transpogov.repositories.RouteRepository;
 import com.cts.transpogov.repositories.TransportProgramRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class ResourceServiceImpl implements IResourceService {
+
+	private final RouteRepository routeRepository;
 	private final ResourceRepository resourceRepository;
 	private final TransportProgramRepository programRepository;
 	// ModelMapper for converting Entity ↔ DTO
@@ -104,14 +108,31 @@ public class ResourceServiceImpl implements IResourceService {
 	@Override
 	public String addResouce(ResourceCreateRequest createRequest) {
 		Resource resource = modelMapper.map(createRequest, Resource.class);
-		// Set default status on creation
-		resource.setStatus(ResourceStatus.IN_PROCUREMENT);
-		resource.setProgram(programRepository.findById(createRequest.getProgramId())
-				.orElseThrow(() -> new ProgramNotFoundException("Program Not found")));
+		TransportProgram program = programRepository.findById(createRequest.getProgramId())
+				.orElseThrow(() -> new ProgramNotFoundException("Program Not found"));
+		if (program.getStatus().equals(ProgramStatus.APPROVED)
+				|| program.getStatus().equals(ProgramStatus.IN_PROGRESS)) {
+			double expensedBugdet = resourceRepository.getTotalBudgetByProgramId(program.getProgramId())
+					+ createRequest.getBudget();
 
-		resourceRepository.save(resource);
-		log.info("Id: {} Resource saved!", resource.getResourceId());
-		return "Resource added succesfully!";
+			if (expensedBugdet <= program.getBudget()) {
+
+				// Set default status on creation
+				resource.setStatus(ResourceStatus.IN_PROCUREMENT);
+				resource.setProgram(program);
+
+				resourceRepository.save(resource);
+				log.info("Id: {} Resource saved!", resource.getResourceId());
+				return "Resource added succesfully!";
+			} else {
+				throw new ResourceAllocationException("You can assign Resource, resource is exceeding budget");
+
+			}
+		} else {
+			throw new ResourceAllocationException(
+					"You can assign Resource, Program is in " + program.getStatus().toString() + " phase");
+		}
+
 	}
 
 	/**
@@ -137,6 +158,40 @@ public class ResourceServiceImpl implements IResourceService {
 		log.info("Id: {} Resource deleted!", resource.getResourceId());
 		resourceRepository.delete(resource);
 		return "Resource deleted successfullty";
+	}
+
+	@Override
+	public ProgramUtilization getResourceUtilization(Long programId) {
+
+		TransportProgram program = programRepository.findById(programId)
+				.orElseThrow(() -> new ResourceNotFoundException("Transport Program not found with id: " + programId));
+
+		List<Resource> resources = resourceRepository.findByProgramProgramId(programId);
+
+		// Budget Calculations
+		double allocatedBudget = program.getBudget();
+
+		double utilizedBudget = resources.stream().mapToDouble(Resource::getBudget).sum();
+
+		double remainingBudget = allocatedBudget - utilizedBudget;
+
+		double budgetUtilizationPercentage = allocatedBudget > 0 ? (utilizedBudget / allocatedBudget) * 100 : 0.0;
+
+		// Resource Calculations
+		int totalResourcesAllocated = resources.stream().mapToInt(Resource::getQuantity).sum();
+
+		int totalResourcesUsed = resources.stream().filter(r -> r.getStatus() == ResourceStatus.IN_USE)
+				.mapToInt(Resource::getQuantity).sum();
+
+		return ProgramUtilization.builder().programId(program.getProgramId()).title(program.getTitle())
+				.description(program.getDescription()).startDate(program.getStartDate()).endDate(program.getEndDate())
+				.status(program.getStatus()).allocatedBudget(allocatedBudget).utilizedBudget(utilizedBudget)
+				.remainingBudget(remainingBudget).budgetUtilizationPercentage(round(budgetUtilizationPercentage))
+				.totalResourcesAllocated(totalResourcesAllocated).totalResourcesUsed(totalResourcesUsed).build();
+	}
+
+	private double round(double value) {
+		return Math.round(value * 100.0) / 100.0;
 	}
 
 }

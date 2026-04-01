@@ -38,6 +38,8 @@ public class Ticket {
 	@Column(name = "ticket_id", updatable = false, nullable = false)
 	private Long ticketId;
 
+ 
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "citizen_id", nullable = false)
 	private Citizen citizen;
@@ -45,6 +47,7 @@ public class Ticket {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "route_id", nullable = false)
 	private Route route;
+
 
 	private LocalDateTime date;
 	private Double fareAmount;

@@ -8,9 +8,9 @@ import com.cts.transpogov.enums.ScheduleStatus;
 import lombok.Data;
 
 @Data
-class ScheduleCreateRequest {
-  private Long routeId;
-  private LocalDate date;
-  private LocalTime time;
-  private ScheduleStatus status;
+public class ScheduleCreateRequest {
+	private Long routeId;
+	private LocalDate date;
+	private LocalTime time;
+	private ScheduleStatus status;
 }

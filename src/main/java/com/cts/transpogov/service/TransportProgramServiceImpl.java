@@ -152,40 +152,9 @@ public class TransportProgramServiceImpl implements ITransportProgramService {
 		programRepository.save(program);
 		return modelMapper.map(program, ProgramResponse.class);
 	}
-
-	/**
-	 * Validates allowed status transitions based on business rules. Prevents
-	 * illegal state changes.
-	 */
-	private void validateTransition(ProgramStatus from, ProgramStatus to, TransportProgram program) {
-
-		switch (from) {
-		case DRAFT -> {
-			if (!(to == ProgramStatus.APPROVED || to == ProgramStatus.CANCELLED)) {
-				throw new IllegalStateException("Cannot change status from DRAFT to " + to);
-			}
-		}
-		case APPROVED -> {
-			if (!(to == ProgramStatus.IN_PROGRESS || to == ProgramStatus.CANCELLED)) {
-				throw new IllegalStateException("Cannot change status from APPROVED to " + to);
-			}
-		}
-		case IN_PROGRESS -> {
-			if (!(to == ProgramStatus.COMPLETED || to == ProgramStatus.ON_HOLD)) {
-				throw new IllegalStateException("Cannot change status from IN PROGRESS to " + to);
-			}
-		}
-		case ON_HOLD -> {
-			if (!(to == ProgramStatus.IN_PROGRESS || to == ProgramStatus.CANCELLED)) {
-				throw new IllegalStateException("Cannot change status from ON HOLD to " + to);
-			}
-		}
-		case COMPLETED, CANCELLED ->
-			throw new IllegalStateException("Status " + from + " is terminal. Change to " + to + " is not allowed.");
-		default -> {
-		}
-		}
-
+	@Override
+	public double calculateEfficiency() {
+		 return 87.5; // placeholder logic
 	}
 
 }

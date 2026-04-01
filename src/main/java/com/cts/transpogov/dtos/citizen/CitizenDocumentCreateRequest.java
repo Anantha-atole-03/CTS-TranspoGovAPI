@@ -1,6 +1,5 @@
 package com.cts.transpogov.dtos.citizen;
 
-import java.time.LocalDate;
 
 import lombok.Data;
 

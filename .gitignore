@@ -29,5 +29,16 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+**/logs/
+**/log/
+*/logs
+**/app.log
+**/logs/app.log*
+logs/
+*/.properties
+**/.properties
+**/.env
+**/.env.*
+*.log
 ### VS Code ###
 .vscode/

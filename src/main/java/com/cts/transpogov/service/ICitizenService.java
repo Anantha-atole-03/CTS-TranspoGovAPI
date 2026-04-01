@@ -6,12 +6,17 @@ import com.cts.transpogov.dtos.citizen.CitizenResponse;
 import com.cts.transpogov.dtos.citizen.CitizenUpdateRequest;
 
 public interface ICitizenService {
-    CitizenResponse save(CitizenCreateRequest requestDto);
-    CitizenResponse addCitizen(CitizenCreateRequest request);
-    
-    CitizenResponse updateCitizen(Long id, CitizenUpdateRequest request);
-    
-    CitizenResponse getCitizenById(Long id);
-    
-    List<CitizenResponse> getAll();
+	CitizenResponse save(CitizenCreateRequest requestDto);
+
+	CitizenResponse addCitizen(CitizenCreateRequest request);
+
+	CitizenResponse updateCitizen(Long id, CitizenUpdateRequest request);
+
+	CitizenResponse getCitizenById(Long id);
+
+	List<CitizenResponse> getAll();
+
+	void forgotPasswordC(String phone, String newPassword);
+
+	//void forgotPassword(String phone, String newPassword);
 }

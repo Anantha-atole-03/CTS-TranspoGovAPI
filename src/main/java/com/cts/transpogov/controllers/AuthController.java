@@ -3,6 +3,7 @@ package com.cts.transpogov.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,6 +12,8 @@ import com.cts.transpogov.dtos.LoginRequestDto;
 import com.cts.transpogov.dtos.LoginResponseDto;
 import com.cts.transpogov.dtos.citizen.CitizenCreateRequest;
 import com.cts.transpogov.dtos.citizen.CitizenResponse;
+import com.cts.transpogov.dtos.citizen.ForgotPasswordRequestC;
+import com.cts.transpogov.dtos.user.ForgotPasswordRequest;
 import com.cts.transpogov.dtos.user.UserCreateRequest;
 import com.cts.transpogov.dtos.user.UserResponse;
 import com.cts.transpogov.security.AuthService;
@@ -40,5 +43,20 @@ public class AuthController {
 	@PostMapping("/login")
 	public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) {
 		return ResponseEntity.ok(authService.login(loginRequestDto));
+	}
+
+	@PostMapping("/forgot-password-U")
+	public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+
+		userService.forgotPassword(request);
+		return ResponseEntity.ok("Temporary password sent to your registered phone number");
+	}
+
+	@PutMapping("/forgot-password-C")
+
+	public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequestC request) {
+		citizenService.forgotPasswordC(request.getPhone(), request.getNewPassword());
+
+		return ResponseEntity.ok("Password updated successfully");
 	}
 }

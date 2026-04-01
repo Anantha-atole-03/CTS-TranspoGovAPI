@@ -36,11 +36,17 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class Citizen implements UserDetails {
+	/**
+	 * 
+	 */
+	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "citizen_id", updatable = false, nullable = false)
 	private Long citizenId;
 
+	private String email;
 	private String name;
 	private LocalDate dob;
 	private String gender;
