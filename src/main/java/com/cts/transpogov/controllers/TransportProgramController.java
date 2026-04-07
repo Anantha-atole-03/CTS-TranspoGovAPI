@@ -53,9 +53,9 @@ public class TransportProgramController {
 	public ResponseEntity<ApiResponse<ProgramResponse>> getProgram(
 			@NotNull(message = "Program id should be provided") @PathVariable Long programId) {
 		log.info("Program With Id {} fetching", programId);
-		ProgramResponse response = programService.getProgram(programId);
-		return ResponseEntity
-				.ok(new ApiResponse<ProgramResponse>("Program fetched Successfuly", HttpStatus.OK.value(), response));
+
+		return ResponseEntity.ok(new ApiResponse<ProgramResponse>("Program fetched Successfuly", HttpStatus.OK.value(),
+				programService.getProgram(programId)));
 
 	}
 
@@ -72,7 +72,7 @@ public class TransportProgramController {
 		return ResponseEntity.status(HttpStatus.CREATED)
 				.body(new ApiResponse<String>(programService.addProgram(program), HttpStatus.OK.value(), null));
 	}
-	
+
 	/*
 	 * Method: PATCH Argument:ProgramId Description:Program submitted for approval
 	 * return: ResponseEntity<ApiResponse> type
@@ -98,8 +98,8 @@ public class TransportProgramController {
 	}
 
 	/*
-	 * Method: PATCH Argument:Program Id, Status  Description:Program status changes to give status
-	 * return: ResponseEntity<ApiResponse> type
+	 * Method: PATCH Argument:Program Id, Status Description:Program status changes
+	 * to give status return: ResponseEntity<ApiResponse> type
 	 */
 	@PatchMapping("/{programId}/status/{status}")
 	public ResponseEntity<ApiResponse<String>> changeProgramStatus(
@@ -110,11 +110,10 @@ public class TransportProgramController {
 				new ApiResponse<>(programService.changeProgramStatus(programId, status), HttpStatus.OK.value(), null));
 
 	}
-	
 
 	/*
-	 * Method: PUT Argument:ProgramId Description:Update Program with id
-	 * return: ResponseEntity<ApiResponse> type
+	 * Method: PUT Argument:ProgramId Description:Update Program with id return:
+	 * ResponseEntity<ApiResponse> type
 	 */
 	@PutMapping("/{programId}")
 	public ResponseEntity<ApiResponse<ProgramResponse>> updateProgram(
@@ -125,8 +124,8 @@ public class TransportProgramController {
 				HttpStatus.OK.value(), programService.updateProgram(programId, updateRequest)));
 	}
 	/*
-	 * Method: DELETE Argument:ProgramId Description:DELETE Program with id
-	 * return: ResponseEntity<ApiResponse> type
+	 * Method: DELETE Argument:ProgramId Description:DELETE Program with id return:
+	 * ResponseEntity<ApiResponse> type
 	 */
 
 	@DeleteMapping("/{programId}")

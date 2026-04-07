@@ -46,9 +46,8 @@ public class TicketController {
 
 		log.info("API call: Get all tickets for CitizenId: {}", citizenId);
 
-		List<TicketResponse> tickets = ticketService.getMyAllTickets(citizenId);
-
-		return ResponseEntity.ok(new ApiResponse<>("Tickets success fully fetched", HttpStatus.OK.value(), tickets));
+		return ResponseEntity.ok(new ApiResponse<>("Tickets success fully fetched", HttpStatus.OK.value(),
+				ticketService.getMyAllTickets(citizenId)));
 	}
 
 	/**
@@ -60,9 +59,8 @@ public class TicketController {
 
 		log.info("API call: Get ticket details for TicketId: {}", ticketId);
 
-		TicketResponse response = ticketService.getTicket(ticketId);
-
-		return ResponseEntity.ok(new ApiResponse<>("Ticket success fully fetched", HttpStatus.OK.value(), response));
+		return ResponseEntity.ok(new ApiResponse<>("Ticket success fully fetched", HttpStatus.OK.value(),
+				ticketService.getTicket(ticketId)));
 
 	}
 
@@ -73,11 +71,9 @@ public class TicketController {
 	public ResponseEntity<ApiResponse<TicketResponse>> bookTicket(@RequestBody TicketCreateRequest request) {
 
 		log.info("API call: Book ticket for CitizenId: {}", request.getCitizenId());
-		TicketResponse response = ticketService.bookTicket(request);
 
-		return new ResponseEntity<>(
-				new ApiResponse<>("Ticket successfully created", HttpStatus.CREATED.value(), response),
-				HttpStatus.CREATED);
+		return new ResponseEntity<>(new ApiResponse<>("Ticket successfully created", HttpStatus.CREATED.value(),
+				ticketService.bookTicket(request)), HttpStatus.CREATED);
 	}
 
 	/**
@@ -88,9 +84,7 @@ public class TicketController {
 
 		log.info("API call: Check ticket for TicketId: {}", ticketId);
 
-		String message = ticketService.checkTicket(ticketId);
-
-		return ResponseEntity.ok(new ApiResponse<>(message, HttpStatus.OK.value(), null));
+		return ResponseEntity.ok(new ApiResponse<>(ticketService.checkTicket(ticketId), HttpStatus.OK.value(), null));
 
 	}
 

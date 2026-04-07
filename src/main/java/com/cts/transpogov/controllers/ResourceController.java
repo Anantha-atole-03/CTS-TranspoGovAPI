@@ -35,7 +35,7 @@ public class ResourceController {
 	private final IResourceService resourceService;
 	private String successMessage = "Resource fetched successfully";
 
-	/*
+	/**
 	 * Method: GET Description: It fetch all resources return:
 	 * ResponseEntity<ApiResponse> type
 	 */
@@ -46,18 +46,19 @@ public class ResourceController {
 				.ok(new ApiResponse<>(successMessage, HttpStatus.OK.value(), resourceService.getAllResouces()));
 	}
 
-	/*
+	/**
 	 * Method: GET Argument: resourceId - Type- Long Description: It fetch all
 	 * resource by provided id return: ResponseEntity<ApiResponse> type
 	 */
 	@GetMapping("/{resourceId}")
-	public ResponseEntity<ApiResponse<ResourceResponse>> getResource(@PathVariable Long resourceId) {
+	public ResponseEntity<ApiResponse<ResourceResponse>> getResource(
+			@NotNull(message = "Resource id required") @PathVariable Long resourceId) {
 		log.info("Resource with id {} feteched", resourceId);
 		return ResponseEntity
 				.ok(new ApiResponse<>(successMessage, HttpStatus.OK.value(), resourceService.getResource(resourceId)));
 	}
 
-	/*
+	/**
 	 * Method: GET Argument: resourceId - Type- Long Description: It fetch all
 	 * resource by provided program id return: ResponseEntity<ApiResponse> type
 	 */
@@ -69,7 +70,7 @@ public class ResourceController {
 				resourceService.getAllResoucesByProgramId(programId)));
 	}
 
-	/*
+	/**
 	 * Method: POST Argument: Resource Request Dto Description: Accepts Resource
 	 * Request Dto and call add Resource method return: ResponseEntity<ApiResponse>
 	 * type
@@ -82,7 +83,7 @@ public class ResourceController {
 				.body(new ApiResponse<>(resourceService.addResouce(createRequest), HttpStatus.CREATED.value(), null));
 	}
 
-	/*
+	/**
 	 * Method: PATCH Argument: Resource id and Status Description: Accepts Resource
 	 * id and status and call service method return: ResponseEntity<ApiResponse>
 	 * type
@@ -97,9 +98,9 @@ public class ResourceController {
 
 	}
 
-	/*
-	 * Method: PATCH Argument: Resource id Description: Accepts Resource id and call
-	 * service method return: ResponseEntity<ApiResponse> type
+	/**
+	 * @Method: PATCH Argument: Resource id @summary: Accepts Resource id and call
+	 *          service method @return: ResponseEntity<ApiResponse> type
 	 */
 	@PatchMapping("/{resourceId}/allocate")
 	public ResponseEntity<ApiResponse<String>> allocateResource(
@@ -110,9 +111,10 @@ public class ResourceController {
 
 	}
 
-	/*
-	 * Method: DELETE Argument: Resource id Description: Accepts Resource id and
-	 * call deleteResource() service method return: ResponseEntity<ApiResponse> type
+	/**
+	 * @Method: DELETE @param: Resource id @summary Accepts Resource id and call
+	 *          deleteResource() service method @return: ResponseEntity<ApiResponse>
+	 *          type
 	 */
 	@DeleteMapping("/{resourceId}")
 	public ResponseEntity<ApiResponse<String>> deleteResource(@PathVariable Long resourceId) {
@@ -122,7 +124,11 @@ public class ResourceController {
 
 	}
 
-	// GET /resources/{programId}/utilizations → Log resource usage
+	/**
+	 * @Method: GET @param : program id {@summary} Accepts program id and call
+	 *          getResourceUtilization() service method @return:
+	 *          ResponseEntity<ApiResponse> type
+	 */
 	@GetMapping("/{programId}/utilizations")
 	public ResponseEntity<ApiResponse<ProgramUtilization>> getUtilizedResourcesForProgram(
 			@PathVariable Long programId) {
