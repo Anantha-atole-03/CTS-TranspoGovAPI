@@ -1,6 +1,5 @@
 package com.cts.transpogov.models;
 
-
 import com.cts.transpogov.enums.RouteStatus;
 
 import jakarta.persistence.Column;
@@ -17,19 +16,25 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity @Table(name = "routes")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Entity
+@Table(name = "routes")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder // that automatically generates a builder pattern for your class
 public class Route {
-  @Id @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "route_id", updatable = false, nullable = false)
-  private Long routeId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO) // identity //sequence //table
+	@Column(name = "route_id", updatable = false, nullable = false)
+	private Long routeId;
 
-  private String title;
-  private String type; 
+	private String title;
+	private String type;
 
-  private String startPoint;
-  private String endPoint;
+	private String startPoint;
+	private String endPoint;
 
-  @Enumerated(EnumType.STRING)
-  private RouteStatus status;
+	@Enumerated(EnumType.STRING) // store the enum name as text in db
+	private RouteStatus status;
 }

@@ -1,5 +1,6 @@
 package com.cts.transpogov.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -40,6 +41,10 @@ public class ScheduleServiceImpl implements IScheduleService {
 		Route route = routeRepository.findById(routeId)
 				.orElseThrow(() -> new RouteNotFoundException("Route not found with id: " + routeId));
 
+		// Validation: prevent past dates
+		if (scheduleRequest.getDate().isBefore(LocalDate.now())) {
+			throw new IllegalArgumentException("Schedule date cannot be in the past.");
+		}
 		Schedule schedule = modelMapper.map(scheduleRequest, Schedule.class);
 		schedule.setRoute(route);
 
@@ -55,6 +60,11 @@ public class ScheduleServiceImpl implements IScheduleService {
 		logger.info("Updating schedule with id: {}", id);
 		Schedule existing = scheduleRepository.findById(id)
 				.orElseThrow(() -> new ScheduleNotFoundException("Schedule not found with id: " + id));
+
+		// Validation: prevent past dates
+		if (scheduleRequest.getDate().isBefore(LocalDate.now())) {
+			throw new IllegalArgumentException("Schedule date cannot be in the past.");
+		}
 
 		existing.setDate(scheduleRequest.getDate());
 		existing.setTime(scheduleRequest.getTime());
